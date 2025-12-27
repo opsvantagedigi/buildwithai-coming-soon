@@ -1,4 +1,138 @@
 #!/usr/bin/env node
+const { spawn, execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
+
+// Utility: check if wrangler dev is running on port 8787
+function isWorkerRunning() {
+  try {
+    const output = execSync("netstat -ano | findstr :8787").toString();
+    return output.includes("LISTENING");
+  } catch {
+    return false;
+  }
+}
+
+// Utility: kill wrangler dev if running
+function killWorker() {
+  try {
+    const output = execSync("netstat -ano | findstr :8787").toString();
+    const pid = output.trim().split(/\s+/).pop();
+    if (pid) {
+      console.log(`Killing existing wrangler dev (PID ${pid})`);
+      execSync(`taskkill /PID ${pid} /F`);
+    }
+  } catch (err) {
+    console.log("No existing wrangler dev to kill");
+  }
+}
+
+// Utility: start wrangler dev and wait for it to boot
+function startWorker() {
+  console.log("Starting wrangler dev...");
+  const child = spawn("npx", ["wrangler", "dev"], {
+    cwd: path.join(__dirname, "..", "worker"),
+    shell: true,
+    stdio: "inherit",
+  });
+  return child;
+}
+
+// Utility: wait for Worker to respond
+async function waitForWorker() {
+  const url = "http://127.0.0.1:8787/health";
+  for (let i = 0; i < 20; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        console.log("Worker is ready");
+        return;
+      }
+    } catch {}
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error("Worker did not become ready in time");
+}
+
+async function runChaosTest() {
+  console.log("Chaos test started");
+
+  const templatesPath = path.join(__dirname, "..", "worker", "src", "routes", "templates.js");
+  const original = fs.readFileSync(templatesPath, "utf8");
+
+  // Write chaos version
+  console.log("Wrote temporary chaos route");
+  fs.writeFileSync(
+    templatesPath,
+    `
+export default {
+  async GET() {
+    return Response.json({ error: "Chaos test failure" }, { status: 500 });
+  }
+};
+`
+  );
+
+  // Option C logic:
+  // If worker is running → kill it and restart
+  // If not running → start it
+  if (isWorkerRunning()) {
+    console.log("Worker already running — restarting for chaos test");
+    killWorker();
+  }
+
+  const workerProcess = startWorker();
+  await waitForWorker();
+
+  console.log("Fetching /templates to validate failure...");
+  const failRes = await fetch("http://127.0.0.1:8787/templates");
+  const failText = await failRes.text();
+
+  if (failRes.status < 500) {
+    console.error("Unexpected templates response:", failRes.status, failText);
+    console.error("Chaos phase failed: templates did not fail");
+    fs.writeFileSync(templatesPath, original);
+    killWorker();
+    startWorker();
+    return;
+  }
+
+  console.log("Failure detected as expected");
+
+  console.log("Validating fallback sample-data...");
+  const fallback = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "assets", "sample-data", "templates.json"), "utf8"));
+  if (!Array.isArray(fallback)) {
+    console.error("Fallback templates.json is invalid");
+    fs.writeFileSync(templatesPath, original);
+    killWorker();
+    startWorker();
+    return;
+  }
+
+  console.log("Fallback validated");
+
+  console.log("Restoring original route...");
+  fs.writeFileSync(templatesPath, original);
+
+  // Restart worker for recovery test
+  killWorker();
+  const workerProcess2 = startWorker();
+  await waitForWorker();
+
+  console.log("Validating recovery...");
+  const recoverRes = await fetch("http://127.0.0.1:8787/templates");
+  if (!recoverRes.ok) {
+    console.error("Recovery failed:", recoverRes.status);
+    killWorker();
+    return;
+  }
+
+  console.log("Recovery succeeded");
+  console.log("Chaos test complete");
+}
+
+runChaosTest();
+#!/usr/bin/env node
 const fs = require('fs').promises;
 const path = require('path');
 const { spawn } = require('child_process');
