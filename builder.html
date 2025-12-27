@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Builder Dashboard — BUILD WITH AI</title>
+  <title>Builder — BUILD WITH AI</title>
   <link rel="stylesheet" href="/assets/layout.css">
 </head>
 <body class="site">
   <div id="app-root"></div>
-
   <script src="/assets/layout.js"></script>
   <script>
     (async function(){
       const root = document.getElementById('app-root');
       window.BWLayout.renderHeader(root);
-      await window.BWLayout.renderDashboard(root);
+      await window.BWLayout.renderBuilder(root);
       window.BWLayout.renderFooter(root);
     })();
   </script>

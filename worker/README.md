@@ -178,6 +178,40 @@ npx wrangler deploy
 
 # Tail logs
 npx wrangler tail
+
+## 13) Local API routes (new)
+
+The Worker exposes these routes under the Worker hostname / route you configure:
+
+- GET /
+  - Response: `{ "message": "BUILD WITH AI API is live" }`
+  - Example:
+    ```bash
+    curl -s https://<YOUR_WORKER_HOST>/
+    ```
+
+- GET /health
+  - Response: `{ "status": "ok" }`
+  - Example:
+    ```bash
+    curl -s https://<YOUR_WORKER_HOST>/health
+    ```
+
+- GET /version
+  - Response: `{ "version": "1.0.0", "timestamp": "..." }`
+  - Example:
+    ```bash
+    curl -s https://<YOUR_WORKER_HOST>/version
+    ```
+
+Run the Worker locally and test these routes:
+
+```bash
+cd worker
+npx wrangler dev
+# then request the displayed local URL (http://127.0.0.1:8787 or similar)
+```
+
 ```
 
 

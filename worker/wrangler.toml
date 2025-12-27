@@ -15,22 +15,22 @@ account_id = "12224d37d10e30bbc9341d6c0e2e71da"
 
 # KV namespace example
 # kv_namespaces = [
-#   { binding = "BUILDWITHAI_CACHE", id = "xxxx" }
+#   { binding = "BUILDWITHAI_CACHE", id = "PASTE_KV_ID_HERE" }
 # ]
 
 # D1 database example
 ## [[d1_databases]]
 ## binding = "BUILDWITHAI_DB"
 ## database_name = "buildwithai"
-## database_id = "xxxx"
+## database_id = "PASTE_D1_ID_HERE"
 
 # R2 bucket example
-# r2_buckets = [
-#   { binding = "BUILDWITHAI_ASSETS", bucket_name = "buildwithai-assets" }
-# ]
+ # r2_buckets = [
+ #   { binding = "BUILDWITHAI_ASSETS", bucket_name = "buildwithai-assets" }
+ # ]
 
 # AI binding example (depends on Cloudflare AI integration availability)
-# ai = { binding = "AI" }
+ # ai = { binding = "AI" }
 
 # Secrets: add via CLI
 # Example:
