@@ -44,7 +44,12 @@ export async function handle(request, env) {
     throw new NotFoundError("Route not found");
   }
 
-  const handler = route[method];
+  // Support named exports like `export async function post(...)` as well as
+  // default export objects like `export default { POST() {} }`.
+  let handler = route[method];
+  if (!handler && route.default) {
+    handler = route.default[method] || route.default[method.toUpperCase()];
+  }
   if (!handler) {
     throw new NotFoundError("Method not allowed");
   }
