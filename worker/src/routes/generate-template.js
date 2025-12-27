@@ -9,7 +9,12 @@ export default {
         return error("Expected application/json body", 415);
       }
 
-      const body = await request.json();
+      let body = null;
+      try {
+        body = await request.json();
+      } catch (e) {
+        return error('Invalid JSON body', 400);
+      }
       const prompt = body?.prompt || body?.promptText || body?.q || "";
       if (!prompt || String(prompt).trim().length < 3) {
         return error("Invalid prompt", 400);
