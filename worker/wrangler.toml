@@ -3,7 +3,8 @@ compatibility_date = "2025-12-27"
 main = "src/index.js"
 
 # Set your Cloudflare account when ready (uncomment and fill):
-# account_id = "YOUR_ACCOUNT_ID"
+# account_id for deployments
+account_id = "12224d37d10e30bbc9341d6c0e2e71da"
 
 # OPTIONAL: specify the worker type if required
 # type = "javascript"
