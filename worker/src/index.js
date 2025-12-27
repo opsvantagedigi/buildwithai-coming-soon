@@ -1,8 +1,12 @@
+import { handle } from "./utils/router.js";
+import { error as jsonError } from "./utils/response.js";
+
 export default {
-  async fetch(request, env, ctx) {
-    const body = { message: "Hello from BUILD WITH AI Worker" };
-    return new Response(JSON.stringify(body), {
-      headers: { "Content-Type": "application/json; charset=utf-8" },
-    });
+  async fetch(request, env) {
+    try {
+      return await handle(request, env);
+    } catch (err) {
+      return jsonError(err?.message || "Internal error", err?.status || 500);
+    }
   },
 };
