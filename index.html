@@ -4,6 +4,73 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BUILD WITH AI — Coming Soon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0a0a0a;--fg:#fff;--muted:#9ca3af;--glass:rgba(255,255,255,0.06);}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#050505,#0a0a0a);color:var(--fg)}
+    .container{max-width:1000px;margin:0 auto;padding:48px;text-align:center}
+    h1{font-family:Orbitron,system-ui;font-size:3rem;margin:0;background:linear-gradient(90deg,#0ea5e9,#22c55e,#eab308);-webkit-background-clip:text;color:transparent}
+    .hero{margin:36px 0;padding:28px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));backdrop-filter:blur(6px)}
+    .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:24px}
+    .card{background:var(--glass);padding:18px;border-radius:12px;text-align:left}
+    .muted{color:var(--muted)}
+    .cta{display:inline-block;padding:12px 20px;border-radius:10px;background:linear-gradient(90deg,#06b6d4,#34d399);color:#000;font-weight:600;text-decoration:none;box-shadow:0 6px 18px rgba(3,7,18,0.6);transition:transform .18s}
+    .cta:hover{transform:translateY(-3px)}
+    .topbar{display:flex;justify-content:space-between;align-items:center}
+    .dashboard-link{font-family:Orbitron,system-ui;font-weight:700;text-decoration:none;padding:8px 12px;border-radius:10px;background:linear-gradient(90deg,#06b6d4,#34d399);color:#021025;box-shadow:0 6px 18px rgba(3,7,18,0.45);transition:transform .18s}
+    .dashboard-link:hover{transform:translateY(-3px)}
+    .toggle{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:var(--fg)}
+    #announcements{margin-top:20px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div><a href="/dashboard" class="dashboard-link">Dashboard</a></div>
+      <button id="themeToggle" class="toggle">Toggle Theme</button>
+    </div>
+    <h1 id="title">BUILD WITH AI</h1>
+    <div class="hero">
+      <p id="subtitle" class="muted">Your AI Website Builder Platform is launching soon.</p>
+      <div style="margin-top:16px"><a href="/dashboard" class="cta">Open Builder (alpha)</a></div>
+    </div>
+
+    <div id="announcements"></div>
+
+    <h2 style="margin-top:36px">Features</h2>
+    <div class="features" id="features"></div>
+  </div>
+
+  <script>
+    async function fetchJson(path){
+      try{const r=await fetch(path); if(!r.ok) return null; return await r.json()}catch(e){console.warn(e);return null}
+    }
+    async function init(){
+      const ui = await fetchJson('/ui-config') || {};
+      if(ui.hero && ui.hero.title) document.getElementById('title').textContent = ui.hero.title;
+      if(ui.hero && ui.hero.subtitle) document.getElementById('subtitle').textContent = ui.hero.subtitle;
+
+      const ann = await fetchJson('/announcements');
+      const annEl = document.getElementById('announcements');
+      if(ann && ann.announcements){ annEl.innerHTML = ann.announcements.map(a=>`<div class="card" style="margin-bottom:8px">${a.text}</div>`).join('') }
+
+      const features = await fetchJson('/features');
+      const featuresEl = document.getElementById('features');
+      if(features && features.features){
+        featuresEl.innerHTML = features.features.map(f=>`<div class="card"><h3>${f.title}</h3><p class="muted">${f.desc}</p></div>`).join('');
+      }
+    }
+    document.getElementById('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');document.body.style.background = document.body.classList.contains('light') ? '#fff' : 'linear-gradient(180deg,#050505,#0a0a0a)';});
+    init();
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUILD WITH AI — Coming Soon</title>
   <style>
     body {
       background: #0a0a0a;
