@@ -104,4 +104,25 @@ npm run test:smoke
 ALLOW_OFFLINE=1 npm run test:smoke
 ```
 
+## Chaos Testing
+
+### Run chaos test:
+
+```bash
+npm run test:chaos
+```
+
+### What it does:
+
+- Temporarily breaks /templates
+- Confirms fallback sample-data works
+- Confirms UI remains stable
+- Restores original Worker code
+- Validates recovery
+
+Notes
+- The script will attempt to start `npx wrangler dev` in the `worker/` folder if a dev server is not already running on port 8787. If you prefer to run the dev server manually, start it before running the chaos test.
+- The chaos test modifies `worker/src/routes/templates.js` temporarily and restores it automatically.
+- Run the chaos test in a terminal with sufficient permissions; the script is designed to be cross-platform but needs `npx wrangler` available.
+
 
