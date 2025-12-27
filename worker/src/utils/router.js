@@ -50,10 +50,20 @@ export async function handle(request, env) {
   }
 
   try {
-    // Do NOT read the body here.
-    // Let the route handler consume request.json() exactly once.
-    const result = await handler(request, env);
-    return result;
+    // Support two handler shapes for backward compatibility:
+    // 1) legacy: handler(request, env, body)
+    // 2) new: handler({ request, env, body, ctx })
+    // Decide based on declared parameter count (`length`).
+    if (typeof handler === 'function' && handler.length >= 2) {
+      // Legacy handler expects (request, env, body)
+      const body = method === 'post' ? await parseJson(request) : null;
+      const result = await handler(request, env, body);
+      return result;
+    } else {
+      // New-style handler expects a single object param
+      const result = await handler({ request, env, ctx });
+      return result;
+    }
   } catch (err) {
     if (err && err.status) {
       return jsonError(err.message || "Error", err.status);
