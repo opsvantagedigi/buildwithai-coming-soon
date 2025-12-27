@@ -1,30 +1,39 @@
 name = "buildwithai-worker"
 compatibility_date = "2025-12-27"
 main = "src/index.js"
-# Uncomment & set your account when ready:
+
+# Set your Cloudflare account when ready (uncomment and fill):
 # account_id = "YOUR_ACCOUNT_ID"
 
-# Optional: specify type if needed
+# OPTIONAL: specify the worker type if required
 # type = "javascript"
 
-# Example bindings (comment/uncomment and fill IDs when you add them):
+# -----------------------------
+# Binding examples (uncomment and fill the IDs when you add resources)
+# -----------------------------
+
+# KV namespace example
 # kv_namespaces = [
-#   { binding = "MY_KV", id = "xxxx" }
+#   { binding = "BUILDWITHAI_CACHE", id = "xxxx" }
 # ]
 
-## D1 database example
+# D1 database example
 ## [[d1_databases]]
-## binding = "MY_DB"
-## database_name = "my_database"
+## binding = "BUILDWITHAI_DB"
+## database_name = "buildwithai"
 ## database_id = "xxxx"
 
-# R2 example
+# R2 bucket example
 # r2_buckets = [
-#   { binding = "MY_BUCKET", bucket_name = "my-bucket" }
+#   { binding = "BUILDWITHAI_ASSETS", bucket_name = "buildwithai-assets" }
 # ]
 
-# AI binding example (placeholder)
+# AI binding example (depends on Cloudflare AI integration availability)
 # ai = { binding = "AI" }
 
-# Secrets / env vars: set via CLI
-# Example: npx wrangler secret put MY_SECRET
+# Secrets: add via CLI
+# Example:
+# npx wrangler secret put OPENPROVIDER_API_KEY
+# npx wrangler secret put ALCHEMY_API_KEY
+# npx wrangler secret put INTERNAL_API_TOKEN
+
