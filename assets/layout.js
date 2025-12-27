@@ -3,13 +3,26 @@
   const API = {
     templates: '/templates',
     uiConfig: '/ui-config',
-    announcements: '/announcements'
+    announcements: '/announcements',
+    samples: '/assets/sample-data'
   };
 
   function qs(sel, ctx=document){return ctx.querySelector(sel)}
   function qsa(sel, ctx=document){return Array.from(ctx.querySelectorAll(sel))}
 
   async function fetchJson(path){try{const r=await fetch(path); if(!r.ok) return null; return await r.json()}catch(e){console.warn('fetch',path,e);return null}}
+
+  // Try primary then fallback, returning parsed JSON or throwing
+  async function fetchWithFallback(primaryUrl, fallbackUrl){
+    if(!navigator.onLine){ console.warn('Offline — using fallback', fallbackUrl); return fetchJson(fallbackUrl) }
+    try{
+      const r = await fetch(primaryUrl);
+      if(r.ok) return await r.json();
+      console.warn('Primary fetch failed', primaryUrl, r.status);
+    }catch(e){ console.warn('Primary fetch error', primaryUrl, e) }
+    // fallback
+    try{ return await fetchJson(fallbackUrl) }catch(e){ console.warn('Fallback fetch failed', fallbackUrl, e); return null }
+  }
 
   function renderHeader(root){
     const header = document.createElement('header'); header.className='container header';
@@ -43,6 +56,11 @@
       document.body.appendChild(dd);
       setTimeout(()=>document.addEventListener('click', function _h(e){ if(!dd.contains(e.target) && e.target !== header.querySelector('.avatar')){ dd.remove(); document.removeEventListener('click',_h) } }, {capture:false}),10);
     });
+
+    // offline badge
+    if(!navigator.onLine){
+      const badge = document.createElement('span'); badge.className='offline-badge'; badge.textContent='Offline Mode — Using Local Data'; header.querySelector('.nav').appendChild(badge);
+    }
   }
 
   function renderFooter(root){
@@ -69,46 +87,78 @@
       </aside>`;
     root.appendChild(main);
 
-    // fetch and render
-    const [ui, templates, announcements] = await Promise.all([fetchJson(API.uiConfig), fetchJson(API.templates), fetchJson(API.announcements)]);
-    updateHero(ui);
-    renderTemplatesGrid(templates);
-    renderFeatureToggles(ui);
-    renderAnnouncements(announcements);
+    // show skeletons
+    const templatesGrid = qs('#templatesGrid'); templatesGrid.innerHTML = '<div class="template-card skeleton" style="height:140px"></div><div class="template-card skeleton" style="height:140px"></div>';
+    qs('#featureToggles').innerHTML = '<div class="toggle-row skeleton" style="height:48px"></div><div class="toggle-row skeleton" style="height:48px"></div>';
+    qs('#announcementsList').innerHTML = '<div class="announcement skeleton" style="height:64px"></div>';
+    qs('#previewArea').innerHTML = '<div class="skeleton" style="height:140px"></div>';
+
+    // fetch with fallback
+    const [ui, templates, announcements] = await Promise.all([
+      fetchWithFallback(API.uiConfig, `${API.samples}/ui-config.json`),
+      fetchWithFallback(API.templates, `${API.samples}/templates.json`),
+      fetchWithFallback(API.announcements, `${API.samples}/announcements.json`)
+    ]);
+
+    if(!ui && !templates && !announcements){
+      showError(main, async ()=>{ await renderDashboard(root) });
+      return;
+    }
+
+    updateHeroFromFallback(ui);
+    renderTemplatesGridFromFallback(templates);
+    renderFeatureTogglesFromFallback(ui);
+    renderAnnouncementsFromFallback(announcements);
   }
 
-  function updateHero(ui){
+  function showError(root, retry){
+    root.innerHTML = `<div class="card" style="text-align:center"><h3>Unable to load data</h3><p class="muted">Please check your connection or try again.</p><div style="margin-top:12px"><button class="cta retry-btn">Retry Loading</button></div></div>`;
+    const btn = qs('.retry-btn', root); if(btn) btn.addEventListener('click', ()=> retry());
+  }
+
+  function updateHeroFromFallback(ui){
     const h = qs('#dashHero'); if(!h) return;
-    const title = (ui && ui.hero && ui.hero.title) ? ui.hero.title : 'Builder Dashboard';
+    const title = (ui && (ui.hero && ui.hero.title || ui.heroText)) ? (ui.hero && ui.hero.title || ui.heroText) : 'Builder Dashboard';
     const sub = (ui && ui.hero && ui.hero.subtitle) ? ui.hero.subtitle : 'Manage templates and builds';
     qs('#dashHero h2', h).textContent = title; qs('#dashHeroSub').textContent = sub; h.classList.add('fade');
   }
 
-  function renderTemplatesGrid(data){
+  function renderTemplatesGridFromFallback(data){
     const root = qs('#templatesGrid'); if(!root) return; root.innerHTML='';
-    const list = (data && data.templates) || (data && data.items) || [];
+    const list = (data && data.templates) || data || [];
     if(list.length === 0){ root.innerHTML = '<div class="card muted">No templates available.</div>'; return }
     list.forEach(t=>{
       const div = document.createElement('div'); div.className='template-card card';
-      div.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px"><div class="template-preview">${t.image?`<img src="${t.image}" alt="${t.title}" style="max-width:100%;max-height:100%;border-radius:6px">`:'Preview'}</div><div><strong>${t.title||t.name}</strong><div class="muted">${t.desc||t.description||''}</div></div><div style="margin-top:8px"><button class="cta use-template">Use Template</button></div></div>`;
+      const img = t.preview || t.image || t.previewUrl || '';
+      div.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px"><div class="template-preview">${img?`<img src="${img}" alt="${t.name||t.title}" style="max-width:100%;max-height:100%;border-radius:6px">`:'Preview'}</div><div><strong>${t.name||t.title}</strong><div class="muted">${t.description||t.desc||''}</div></div><div style="margin-top:8px"><button class="cta use-template">Use Template</button></div></div>`;
       div.addEventListener('click', (e)=>{ if(e.target && e.target.classList && e.target.classList.contains('use-template')){ alert('Use Template — placeholder') } selectTemplate(t); });
       root.appendChild(div);
     });
   }
 
-  function renderFeatureToggles(ui){
+  function renderFeatureTogglesFromFallback(ui){
     const root = qs('#featureToggles'); if(!root) return; root.innerHTML='';
-    const flags = (ui && ui.features) || ui && ui.featureFlags || [];
+    const flags = (ui && (ui.features || ui.featureFlags)) || ui && ui.features || ui && ui.featureFlags || [];
     if(!flags || flags.length===0){ root.innerHTML='<div class="muted card">No feature toggles</div>'; return }
-    flags.forEach(f=>{ const row = document.createElement('div'); row.className='toggle-row'; row.innerHTML = `<div><strong>${f.name}</strong><div class="muted" style="font-size:12px">${f.desc||f.description||''}</div></div><div><label style="display:inline-flex;align-items:center;gap:8px"><input type="checkbox" disabled>${''}<span class="muted">Off</span></label></div>`; root.appendChild(row); });
+    flags.forEach(f=>{ const row = document.createElement('div'); row.className='toggle-row'; row.innerHTML = `<div><strong>${typeof f === 'string' ? f : f.name}</strong><div class="muted" style="font-size:12px">${typeof f === 'string' ? '' : f.desc||f.description||''}</div></div><div><label style="display:inline-flex;align-items:center;gap:8px"><input type="checkbox" disabled>${''}<span class="muted">Off</span></label></div>`; root.appendChild(row); });
   }
 
-  function renderAnnouncements(data){
+  function renderAnnouncementsFromFallback(data){
     const root = qs('#announcementsList'); if(!root) return; root.innerHTML='';
-    const items = (data && data.announcements) || [];
+    const items = data || [];
     if(items.length===0){ root.innerHTML='<div class="muted card">No announcements</div>'; return }
-    items.forEach(a=>{ const d = document.createElement('div'); d.className='announcement'; d.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${a.title||a.category||'Notice'}</strong><div class="muted" style="font-size:13px">${a.text||a.body||''}</div></div><div style="font-size:12px;color:var(--muted)">${a.time||a.timestamp||''}</div></div>`; root.appendChild(d); });
+    items.forEach(a=>{ const d = document.createElement('div'); d.className='announcement'; d.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${a.title||a.category||'Notice'}</strong><div class="muted" style="font-size:13px">${a.message||a.text||a.body||''}</div></div><div style="font-size:12px;color:var(--muted)">${a.timestamp||a.time||''}</div></div>`; root.appendChild(d); });
   }
+
+  function updateHero(ui){
+    return updateHeroFromFallback(ui);
+  }
+
+  function renderTemplatesGrid(data){ return renderTemplatesGridFromFallback(data) }
+
+  function renderFeatureToggles(ui){ return renderFeatureTogglesFromFallback(ui) }
+
+  function renderAnnouncements(data){ return renderAnnouncementsFromFallback(data) }
 
   function selectTemplate(t){
     const area = qs('#previewArea'); if(!area) return; area.innerHTML = `<div><strong>${t.title||t.name}</strong><div class="muted">${t.category||t.type||''}</div><p style="margin-top:8px">${t.desc||t.description||''}</p></div>`;
@@ -125,11 +175,16 @@
       </div>
     `;
     root.appendChild(container);
-    const templates = await fetchJson(API.templates);
-    const rootGrid = qs('#builderTemplates'); if(!rootGrid) return;
-    const list = (templates && templates.templates) || [];
-    if(list.length===0) rootGrid.innerHTML = '<div class="muted card">No templates</div>';
-    list.forEach(t=>{ const div = document.createElement('div'); div.className='template-card card'; div.innerHTML = `<div class="template-preview">${t.image?`<img src="${t.image}" style="max-width:100%;max-height:100%;border-radius:6px">`:'Preview'}</div><div style="margin-top:8px"><strong>${t.title||t.name}</strong><div class="muted">${t.desc||t.description||''}</div></div>`; div.addEventListener('click',()=>alert('Start Building — placeholder')); rootGrid.appendChild(div); });
+
+    // skeleton
+    const grid = qs('#builderTemplates'); grid.innerHTML = '<div class="template-card skeleton" style="height:140px"></div><div class="template-card skeleton" style="height:140px"></div>';
+
+    const templates = await fetchWithFallback(API.templates, `${API.samples}/templates.json`);
+    if(!templates){ showError(container, async ()=>{ await renderBuilder(root) }); return }
+    const list = (templates && templates.templates) || templates || [];
+    if(list.length===0) grid.innerHTML = '<div class="muted card">No templates</div>';
+    grid.innerHTML = '';
+    list.forEach(t=>{ const div = document.createElement('div'); div.className='template-card card'; const img = t.preview || t.image || ''; div.innerHTML = `<div class="template-preview">${img?`<img src="${img}" style="max-width:100%;max-height:100%;border-radius:6px">`:'Preview'}</div><div style="margin-top:8px"><strong>${t.name||t.title}</strong><div class="muted">${t.description||t.desc||''}</div></div>`; div.addEventListener('click',()=>alert('Start Building — placeholder')); grid.appendChild(div); });
   }
 
   // Expose API

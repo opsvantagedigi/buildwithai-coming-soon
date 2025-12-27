@@ -1,0 +1,14 @@
+[
+  {
+    "id": "template-1",
+    "name": "Modern AI Landing Page",
+    "description": "A clean, gradient‑driven hero layout with animated sections.",
+    "preview": "/assets/previews/template1.svg"
+  },
+  {
+    "id": "template-2",
+    "name": "Architectural Portfolio",
+    "description": "Minimalist grid layout with smooth transitions.",
+    "preview": "/assets/previews/template2.svg"
+  }
+]
