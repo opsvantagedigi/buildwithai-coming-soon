@@ -74,5 +74,34 @@ Expected endpoint shapes
 Verification
 ------------
 After you run the smoke-checks, if everything is working the frontend should never display empty content; it will fall back to the sample-data files when Worker endpoints are unreachable.
+ 
+## Automated Smoke Tests
+
+### Run tests:
+
+```bash
+npm run test:smoke
+```
+
+### What it validates:
+
+- Worker endpoints
+- JSON structure
+- Fallback sample-data
+- Offline behavior
+- Schema consistency
+
+Notes
+- By default the script expects the Worker dev server to be running at `http://127.0.0.1:8787` and will mark endpoint tests as failures if unreachable.
+- To run the smoke tests in an offline-first mode (treat endpoint failures as warnings) set the environment variable `ALLOW_OFFLINE=1` when running the tests.
+
+Examples
+```bash
+# Normal (fail if worker endpoints down)
+npm run test:smoke
+
+# Allow offline (still validates local sample-data)
+ALLOW_OFFLINE=1 npm run test:smoke
+```
 
 
