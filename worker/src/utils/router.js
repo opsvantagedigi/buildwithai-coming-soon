@@ -50,8 +50,9 @@ export async function handle(request, env) {
   }
 
   try {
-    const body = method === "post" ? await parseJson(request) : null;
-    const result = await handler(request, env, body);
+    // Do NOT read the body here.
+    // Let the route handler consume request.json() exactly once.
+    const result = await handler(request, env);
     return result;
   } catch (err) {
     if (err && err.status) {
