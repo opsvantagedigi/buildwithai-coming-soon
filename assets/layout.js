@@ -13,15 +13,37 @@
 
   async function fetchJson(path){try{const r=await fetch(path); if(!r.ok) return null; return await r.json()}catch(e){console.warn('fetch',path,e);return null}}
 
-  // Try primary then fallback, returning parsed JSON or throwing
+  // Try primary then fallback, returning parsed JSON or null.
+  // If running the static site locally (e.g. Live Server on :5500) and the Worker
+  // is available on :8787, attempt that origin as an additional fallback.
   async function fetchWithFallback(primaryUrl, fallbackUrl){
     if(!navigator.onLine){ console.warn('Offline — using fallback', fallbackUrl); return fetchJson(fallbackUrl) }
+
+    // Helper to normalize URL for fetch
+    const asAbsolute = (u) => (/^https?:\/\//i.test(u)) ? u : (u.startsWith('/') ? (location.origin + u) : (location.origin + '/' + u));
+
     try{
-      const r = await fetch(primaryUrl);
+      const r = await fetch(asAbsolute(primaryUrl));
       if(r.ok) return await r.json();
       console.warn('Primary fetch failed', primaryUrl, r.status);
     }catch(e){ console.warn('Primary fetch error', primaryUrl, e) }
-    // fallback
+
+    // If primary failed, and we're not already talking to the worker dev server,
+    // try the worker dev origin which runs on 127.0.0.1:8787 during local development.
+    try{
+      const isLocalhost = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+      const onWorkerPort = location.hostname === '127.0.0.1' && String(location.port) === '8787';
+      if(!onWorkerPort){
+        const workerUrl = `http://${'127.0.0.1'}:8787${primaryUrl.startsWith('/') ? primaryUrl : '/' + primaryUrl}`;
+        try{
+          const wr = await fetch(workerUrl);
+          if(wr.ok){ console.info('Fetched from worker dev at', workerUrl); return await wr.json(); }
+          console.warn('Worker dev fetch failed', workerUrl, wr.status);
+        }catch(e){ console.warn('Worker dev fetch error', workerUrl, e); }
+      }
+    }catch(e){ console.warn('worker fallback check error', e) }
+
+    // Finally try local sample-data fallback
     try{ return await fetchJson(fallbackUrl) }catch(e){ console.warn('Fallback fetch failed', fallbackUrl, e); return null }
   }
 
