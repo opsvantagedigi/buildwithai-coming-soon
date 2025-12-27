@@ -53,7 +53,8 @@ export async function handle(request, env) {
   if (!handler) {
     throw new NotFoundError("Method not allowed");
   }
-
+  // Provide a minimal context object for handlers that expect it.
+  const ctx = {};
   try {
     // Support two handler shapes for backward compatibility:
     // 1) legacy: handler(request, env, body)
