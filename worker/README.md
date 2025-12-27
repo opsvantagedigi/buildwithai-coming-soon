@@ -36,6 +36,12 @@ npm run deploy
 npx wrangler deploy
 ```
 
+Explicit account-id deploy (uses provided account):
+
+```bash
+npx wrangler deploy --account-id 12224d37d10e30bbc9341d6c0e2e71da
+```
+
 ## 4) Bindings examples (edit `worker/wrangler.toml` and uncomment/fill IDs)
 
 KV namespace example:
@@ -78,6 +84,15 @@ npx wrangler secret put ALCHEMY_API_KEY
 npx wrangler secret put INTERNAL_API_TOKEN
 ```
 
+Run these from inside the `worker/` folder:
+
+```bash
+cd worker
+npx wrangler secret put OPENPROVIDER_API_KEY
+npx wrangler secret put ALCHEMY_API_KEY
+npx wrangler secret put INTERNAL_API_TOKEN
+```
+
 ## 6) Scripts
 `worker/package.json` includes these scripts:
 
@@ -103,9 +118,66 @@ To route requests from `api.buildwithai.digital/*` to this Worker, add a Trigger
 
 Alternatively, you can configure routes via the Cloudflare API or Terraform. Ensure the DNS for `api.buildwithai.digital` points to Cloudflare (proxied) and the Pages site remains separate.
 
+CLI-compatible note (API token required):
+
+You can also manage Worker routes via the Cloudflare API. This requires an API token with `workers:edit` and `zones:read` scopes and calls to the Routes/Workers endpoints. Dashboard is recommended for simplicity.
+
 ## 9) Troubleshooting
 
 - If Pages still runs Wrangler, ensure the repository root contains only the static `index.html` and `.gitignore`, and that Cloudflare Pages Project Settings → Build & Deploy has an empty Build command and output directory `/`.
 - If `wrangler dev` fails, run `npx wrangler --version` and re-authenticate with `npx wrangler login`.
+
+## 10) Create Cloudflare resources (CLI)
+
+Run these to create the resources; save returned IDs and paste them into `worker/wrangler.toml` under the commented binding sections.
+
+```bash
+# Create KV namespace
+npx wrangler kv:namespace create BUILDWITHAI_CACHE
+
+# Create D1 database
+npx wrangler d1 create buildwithai
+
+# Create R2 bucket
+npx wrangler r2 bucket create buildwithai-assets
+```
+
+## 11) Safe authentication for automation (do NOT use Global API Key)
+
+Use a scoped API Token with appropriate permissions (Workers: Edit, KV: Edit, D1: Edit, R2: Edit, Pages: Write if needed).
+
+Authenticate locally (interactive):
+
+```bash
+npx wrangler login
+```
+
+If the login callback fails (local redirect issues), use no-localhost mode:
+
+```bash
+npx wrangler login --no-localhost
+```
+
+For CI/CD, configure Wrangler with an API token:
+
+```bash
+npx wrangler config
+# When prompted, paste your API token
+```
+
+## 12) Final verification commands
+
+Test locally and tail logs:
+
+```bash
+cd worker
+npx wrangler dev
+
+# Deploy
+npx wrangler deploy
+
+# Tail logs
+npx wrangler tail
+```
 
 
