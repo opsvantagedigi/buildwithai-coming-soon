@@ -12,13 +12,6 @@
     <script src="layout.js"></script>
 
   <script src="/assets/layout.js"></script>
-  <script>
-    (async function(){
-      const root = document.getElementById('app-root');
-      window.BWLayout.renderHeader(root);
-      await window.BWLayout.renderDashboard(root);
-      window.BWLayout.renderFooter(root);
-    })();
-  </script>
+  <script src="/assets/page-init.js" defer></script>
 </body>
 </html>

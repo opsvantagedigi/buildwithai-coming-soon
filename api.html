@@ -11,14 +11,6 @@
     <link rel="stylesheet" href="layout.css">
     <script src="layout.js"></script>
   <script src="/assets/layout.js"></script>
-  <script>
-    (function(){
-      const root = document.getElementById('app-root');
-      window.BWLayout.renderHeader(root);
-      const c = document.createElement('main'); c.className='container'; c.innerHTML = '<div class="card"><h2>API (placeholder)</h2><p class="muted">Public API endpoints and examples will be listed here.</p></div>';
-      root.appendChild(c);
-      window.BWLayout.renderFooter(root);
-    })();
-  </script>
+  <script src="/assets/page-init.js" defer></script>
 </body>
 </html>
