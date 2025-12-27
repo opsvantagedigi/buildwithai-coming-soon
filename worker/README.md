@@ -93,3 +93,19 @@ npx wrangler secret put INTERNAL_API_TOKEN
 - The `worker/.gitignore` contains `node_modules/` and `dist/` to prevent accidental check-ins.
 - After adding bindings and secrets, deploy with `npx wrangler deploy`.
 
+## 8) Adding a custom domain route for the Worker (bind to API hostname)
+
+To route requests from `api.buildwithai.digital/*` to this Worker, add a Trigger/Route in the Cloudflare dashboard:
+
+1. Open Cloudflare Dashboard → Workers.
+2. Select the Worker (or create a new one) and go to **Triggers** → **Add route**.
+3. Enter the route: `api.buildwithai.digital/*` and save.
+
+Alternatively, you can configure routes via the Cloudflare API or Terraform. Ensure the DNS for `api.buildwithai.digital` points to Cloudflare (proxied) and the Pages site remains separate.
+
+## 9) Troubleshooting
+
+- If Pages still runs Wrangler, ensure the repository root contains only the static `index.html` and `.gitignore`, and that Cloudflare Pages Project Settings → Build & Deploy has an empty Build command and output directory `/`.
+- If `wrangler dev` fails, run `npx wrangler --version` and re-authenticate with `npx wrangler login`.
+
+

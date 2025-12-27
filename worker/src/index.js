@@ -1,7 +1,8 @@
 export default {
   async fetch(request, env, ctx) {
-    return new Response("Hello from buildwithai Worker", {
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    const body = { message: "Hello from BUILD WITH AI Worker" };
+    return new Response(JSON.stringify(body), {
+      headers: { "Content-Type": "application/json; charset=utf-8" },
     });
   },
 };
