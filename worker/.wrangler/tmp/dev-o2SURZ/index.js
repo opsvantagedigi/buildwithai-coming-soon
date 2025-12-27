@@ -111,7 +111,7 @@ __name(get6, "get");
 // src/routes/generate-template.js
 var generate_template_exports = {};
 __export(generate_template_exports, {
-  post: () => post
+  default: () => generate_template_default
 });
 
 // src/lib/ai.js
@@ -177,25 +177,31 @@ function escapeHtml(s) {
 __name(escapeHtml, "escapeHtml");
 
 // src/routes/generate-template.js
-async function post(request, env) {
-  try {
-    const contentType = request.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      return error("Expected application/json body", 415);
+var generate_template_default = {
+  async POST({ request, env }) {
+    try {
+      const contentType = request.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        return error("Expected application/json body", 415);
+      }
+      let body = null;
+      try {
+        body = await request.json();
+      } catch (e) {
+        return error("Invalid JSON body", 400);
+      }
+      const prompt = body?.prompt || body?.promptText || body?.q || "";
+      if (!prompt || String(prompt).trim().length < 3) {
+        return error("Invalid prompt", 400);
+      }
+      const result = await generateTemplate(prompt);
+      return json(result, 200);
+    } catch (e) {
+      console.error("generate-template error", e);
+      return error("Internal server error", 500);
     }
-    const body = await request.json();
-    const prompt = body && (body.prompt || body.promptText || body.q) || "";
-    if (!prompt || String(prompt).trim().length < 3) {
-      return error("Invalid prompt", 400);
-    }
-    const result = await generateTemplate(prompt);
-    return json(result, 200);
-  } catch (e) {
-    console.error("generate-template error", e);
-    return error("Internal server error", 500);
   }
-}
-__name(post, "post");
+};
 
 // src/routes/announcements.js
 var announcements_exports = {};
@@ -260,14 +266,20 @@ async function handle(request, env) {
   if (!route) {
     throw new NotFoundError("Route not found");
   }
-  const handler = route[method];
+  let handler = route[method];
+  if (!handler && route.default) {
+    handler = route.default[method] || route.default[method.toUpperCase()];
+  }
   if (!handler) {
     throw new NotFoundError("Method not allowed");
   }
+  const ctx = {};
   try {
+    if (handler.length === 1) {
+      return await handler({ request, env, ctx });
+    }
     const body = method === "post" ? await parseJson(request) : null;
-    const result = await handler(request, env, body);
-    return result;
+    return await handler(request, env, body);
   } catch (err) {
     if (err && err.status) {
       return error(err.message || "Error", err.status);
@@ -415,7 +427,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-EyYdsi/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-NJa5Ov/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -447,7 +459,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-EyYdsi/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-NJa5Ov/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

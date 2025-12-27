@@ -53,23 +53,23 @@ export async function handle(request, env) {
   if (!handler) {
     throw new NotFoundError("Method not allowed");
   }
-  // Provide a minimal context object for handlers that expect it.
+  // Provide a minimal context object for new-style handlers.
   const ctx = {};
+
   try {
-    // Support two handler shapes for backward compatibility:
-    // 1) legacy: handler(request, env, body)
-    // 2) new: handler({ request, env, body, ctx })
-    // Decide based on declared parameter count (`length`).
-    if (typeof handler === 'function' && handler.length >= 2) {
-      // Legacy handler expects (request, env, body)
-      const body = method === 'post' ? await parseJson(request) : null;
-      const result = await handler(request, env, body);
-      return result;
-    } else {
-      // New-style handler expects a single object param
-      const result = await handler({ request, env, ctx });
-      return result;
+    // NEW-STYLE HANDLER:
+    // export default { POST({ request, env, ctx }) { ... } }
+    // These always have handler.length === 1
+    if (handler.length === 1) {
+      return await handler({ request, env, ctx });
     }
+
+    // LEGACY HANDLER:
+    // export async function post(request, env, body)
+    // These have handler.length >= 2
+    const body = method === "post" ? await parseJson(request) : null;
+    return await handler(request, env, body);
+
   } catch (err) {
     if (err && err.status) {
       return jsonError(err.message || "Error", err.status);

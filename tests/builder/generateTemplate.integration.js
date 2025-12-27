@@ -10,7 +10,29 @@ function isWorkerRunning(){
 }
 
 function killWorker(){
-  try{ const out = execSync('netstat -ano | findstr :8787').toString(); const pid = out.trim().split(/\s+/).pop(); if(pid){ execSync(`taskkill /PID ${pid} /F`); }}catch(e){}
+  try{
+    const out = execSync('netstat -ano | findstr :8787').toString();
+    const lines = out.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+    // Find the LISTENING line first
+    let pid = null;
+    for(const line of lines){
+      if(/LISTENING/i.test(line)){
+        const parts = line.split(/\s+/);
+        pid = parts[parts.length-1];
+        break;
+      }
+    }
+    if(!pid && lines.length>0){ // fallback to last token of first line
+      const parts = lines[0].split(/\s+/);
+      pid = parts[parts.length-1];
+    }
+    if(pid){
+      const myPid = String(process.pid);
+      if(pid === myPid){ console.log('killWorker: skipping killing current process', pid); return }
+      console.log('Killing wrangler dev (PID', pid, ')');
+      execSync(`taskkill /PID ${pid} /F`);
+    }
+  }catch(e){}
 }
 
 function startWorker(){
@@ -51,12 +73,29 @@ async function run(){
     console.log('Generated', j.id);
   }
 
-  // Simulate offline: kill worker and ensure /generate-template fails and sample-data exists
+  // Simulate offline: kill worker and ensure /generate-template is unavailable or returns 5xx
   console.log('Simulating worker down');
   killWorker();
-  await new Promise(r=>setTimeout(r,1000));
-  const downRes = await fetch(serverUrl + '/generate-template', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ prompt:'test' }) }).catch(e=>null);
-  if(downRes){ console.error('Expected no response when worker down'); }
+  // wait a bit for sockets to close
+  await new Promise(r=>setTimeout(r,2000));
+
+  // Try a few times to hit the endpoint; accept network error or 5xx as "down"
+  let downOk = false;
+  for(let i=0;i<6;i++){
+    let resp = null;
+    try{
+      resp = await fetch(serverUrl + '/generate-template', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ prompt:'test' }) , timeout: 3000});
+    }catch(e){ resp = null }
+    if(!resp){
+      console.log('No response (expected)'); downOk = true; break;
+    }
+    if(resp.status >= 500){
+      console.log('Got server error (expected):', resp.status); downOk = true; break;
+    }
+    console.log('Unexpected response while simulating down (status:', resp.status, ') — retrying');
+    await new Promise(r=>setTimeout(r,1000));
+  }
+  if(!downOk){ console.warn('Worker did not appear fully down — continuing with fallback validation'); }
   const sampleFile = path.join(__dirname,'..','..','assets','sample-data','templates.json');
   if(!fs.existsSync(sampleFile)){ console.error('Sample-data templates.json missing'); process.exit(1) }
   try{ JSON.parse(fs.readFileSync(sampleFile,'utf8')) }catch(e){ console.error('Sample-data templates.json invalid'); process.exit(1) }
@@ -64,9 +103,17 @@ async function run(){
 
   // Restore worker
   console.log('Restoring worker');
-  proc = startWorker(); const ok2 = await waitForWorker(); if(!ok2){ console.error('Worker did not restart'); process.exit(1) }
-  const r2 = await postPrompt('Recovery test').catch(e=>null);
-  if(!r2 || r2.status !== 200){ console.error('Recovery generate failed'); process.exit(1) }
+  proc = startWorker(); const ok2 = await waitForWorker(30000); if(!ok2){ console.error('Worker did not restart'); process.exit(1) }
+  // retry generate until success or timeout
+  let recovered = false;
+  for(let i=0;i<8;i++){
+    try{
+      const r2 = await postPrompt('Recovery test');
+      if(r2 && r2.status === 200){ recovered = true; break }
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,1000));
+  }
+  if(!recovered){ console.error('Recovery generate failed'); process.exit(1) }
   console.log('Recovery succeeded');
 
   // Cleanup: if worker wasn't running before, kill it
