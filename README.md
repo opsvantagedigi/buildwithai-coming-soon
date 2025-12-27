@@ -18,3 +18,61 @@ How the frontend talks to the Worker
 Notes
 - All Worker backend changes are intentionally avoided here; the frontend consumes the above endpoints only.
 - Pages root contains only static assets and HTML; the Worker remains in `/worker`.
+
+Fallback & Offline
+- `assets/sample-data/` contains local JSON fallbacks used when the Worker endpoints are unreachable:
+  - `ui-config.json`, `templates.json`, `announcements.json`
+- Frontend uses `assets/layout.js`'s `fetchWithFallback(primary, fallback)` to try the Worker first, then the local samples.
+- If the browser is offline (`navigator.onLine === false`) the app immediately uses the local samples and shows an "Offline Mode — Using Local Data" badge in the header.
+
+Skeletons, Error States, and AI placeholders
+- The UI shows skeleton loaders (subtle shimmer) while fetching data.
+- If both primary and fallback fail, a friendly error card is shown with a "Retry Loading" button.
+- Sections that might take longer show a pulsing "AI is preparing your content…" style via CSS.
+
+How to add or update sample data
+- Edit or add files under `assets/sample-data/` following the existing structure.
+- Use `/assets/previews/` for any template preview images (SVGs are used for samples).
+
+Smoke-check & Verification
+--------------------------
+To verify the Worker and frontend locally:
+
+1. Start the Worker dev server (from the repo root):
+
+```bash
+cd worker
+npx wrangler dev
+```
+
+2. Verify Worker endpoints (example using curl):
+
+```bash
+curl http://127.0.0.1:8787/ui-config
+curl http://127.0.0.1:8787/templates
+curl http://127.0.0.1:8787/announcements
+curl http://127.0.0.1:8787/version
+curl http://127.0.0.1:8787/health
+```
+
+3. Check the Pages frontend (open files in a browser or serve the repository as static files):
+  - `/` (index.html) — hero text should come from `/ui-config` when Worker is running
+  - `/dashboard.html` — templates, toggles, and announcements should load from Worker
+  - `/builder.html` — templates and preview should load from Worker
+
+4. Test fallback behavior:
+  - Stop the Worker or disable network in DevTools.
+  - Reload `/dashboard.html` — the UI should use files in `assets/sample-data/` and show the offline badge.
+  - Click "Retry Loading" after restoring the Worker to verify it picks up live data again.
+
+Expected endpoint shapes
+------------------------
+- `/ui-config` → object with `hero` (title, subtitle) and `features` (array)
+- `/templates` → object or array: `{ templates: [ { id, name, description, preview }, ... ] }` or an array of templates
+- `/announcements` → object `{ announcements: [ { title, message, timestamp }, ... ] }`
+
+Verification
+------------
+After you run the smoke-checks, if everything is working the frontend should never display empty content; it will fall back to the sample-data files when Worker endpoints are unreachable.
+
+
