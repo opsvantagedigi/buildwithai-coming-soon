@@ -1,0 +1,30 @@
+name = "buildwithai-worker"
+compatibility_date = "2025-12-27"
+main = "src/index.js"
+# Uncomment & set your account when ready:
+# account_id = "YOUR_ACCOUNT_ID"
+
+# Optional: specify type if needed
+# type = "javascript"
+
+# Example bindings (comment/uncomment and fill IDs when you add them):
+# kv_namespaces = [
+#   { binding = "MY_KV", id = "xxxx" }
+# ]
+
+## D1 database example
+## [[d1_databases]]
+## binding = "MY_DB"
+## database_name = "my_database"
+## database_id = "xxxx"
+
+# R2 example
+# r2_buckets = [
+#   { binding = "MY_BUCKET", bucket_name = "my-bucket" }
+# ]
+
+# AI binding example (placeholder)
+# ai = { binding = "AI" }
+
+# Secrets / env vars: set via CLI
+# Example: npx wrangler secret put MY_SECRET
