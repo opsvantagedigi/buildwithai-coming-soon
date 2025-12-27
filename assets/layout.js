@@ -4,7 +4,8 @@
     templates: '/templates',
     uiConfig: '/ui-config',
     announcements: '/announcements',
-    samples: '/assets/sample-data'
+    samples: '/assets/sample-data',
+    generate: '/generate-template'
   };
 
   function qs(sel, ctx=document){return ctx.querySelector(sel)}
@@ -171,7 +172,11 @@
       <div style="width:100%">
         <div class="hero card"><h2>Builder</h2><p class="muted">Select a template to get started</p></div>
         <div style="margin-top:18px"><h3>Templates</h3><div id="builderTemplates" class="grid"></div></div>
-        <div style="margin-top:18px"><button class="cta">Start Building</button></div>
+        <div style="margin-top:18px;display:flex;gap:12px;align-items:center">
+          <button class="cta">Start Building</button>
+          <button class="cta alt" id="aiGenerateBtn">Generate with AI</button>
+          <div id="aiStatus" style="font-size:13px;color:var(--muted)"></div>
+        </div>
       </div>
     `;
     root.appendChild(container);
@@ -185,7 +190,59 @@
     if(list.length===0) grid.innerHTML = '<div class="muted card">No templates</div>';
     grid.innerHTML = '';
     list.forEach(t=>{ const div = document.createElement('div'); div.className='template-card card'; const img = t.preview || t.image || ''; div.innerHTML = `<div class="template-preview">${img?`<img src="${img}" style="max-width:100%;max-height:100%;border-radius:6px">`:'Preview'}</div><div style="margin-top:8px"><strong>${t.name||t.title}</strong><div class="muted">${t.description||t.desc||''}</div></div>`; div.addEventListener('click',()=>alert('Start Building — placeholder')); grid.appendChild(div); });
+
+    // Wire AI Generate button
+    const aiBtn = document.getElementById('aiGenerateBtn');
+    if(aiBtn){ aiBtn.addEventListener('click', openAIGenerator); }
   }
+
+  // AI generator modal and flow
+  function openAIGenerator(){
+    // modal
+    if(document.getElementById('aiModal')) return;
+    const modal = document.createElement('div'); modal.id='aiModal'; modal.className='ai-modal';
+    modal.innerHTML = `
+      <div class="card" style="max-width:720px;margin:40px auto;padding:18px">
+        <h3>Generate Template with AI</h3>
+        <p class="muted">Enter a short prompt (e.g. "Landing page for a fitness coach")</p>
+        <textarea id="aiPrompt" style="width:100%;height:90px;margin-top:8px" placeholder="Describe the site..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:12px"><button class="cta" id="aiSubmit">Generate</button><button class="cta alt" id="aiCancel">Cancel</button><div id="aiMsg" style="margin-left:8px;color:var(--muted);font-size:13px"></div></div>
+        <div id="aiPreviewContainer" style="margin-top:12px"></div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById('aiCancel').addEventListener('click', ()=> modal.remove());
+    document.getElementById('aiSubmit').addEventListener('click', async ()=>{
+      const prompt = document.getElementById('aiPrompt').value.trim();
+      const msg = document.getElementById('aiMsg');
+      if(!prompt){ msg.textContent='Please enter a prompt'; return }
+      msg.textContent='Generating…';
+      try{
+        if(!navigator.onLine){ msg.textContent='Offline — AI generation requires the Worker.'; return }
+        // show loading skeleton
+        const preview = document.getElementById('aiPreviewContainer'); preview.innerHTML = '<div class="skeleton" style="height:220px"></div>';
+        const res = await fetch(API.generate, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ prompt }) });
+        if(!res.ok){ msg.textContent = `Generation failed: ${res.status}`; preview.innerHTML=''; return }
+        const j = await res.json();
+        msg.textContent='Generated — preview below';
+        renderAIGeneratedPreview(j, preview);
+        // also update global preview area if available
+        const globalPreview = document.getElementById('previewArea'); if(globalPreview) renderAIGeneratedPreview(j, globalPreview);
+      }catch(e){ msg.textContent='Error generating template'; console.warn(e); }
+    });
+  }
+
+  function renderAIGeneratedPreview(data, container){
+    if(!data) { container.innerHTML = '<div class="card muted">No preview</div>'; return }
+    // inject style tag scoped to container
+    const styleId = 'ai-generated-style';
+    let st = document.getElementById(styleId);
+    if(!st){ st = document.createElement('style'); st.id = styleId; document.head.appendChild(st); }
+    st.textContent = data.css || '';
+    container.innerHTML = `<div class="ai-meta" style="margin-bottom:8px"><strong>${escapeHtml(data.name)}</strong><div class="muted">${escapeHtml(data.description)}</div></div><div class="ai-html">${data.html}</div>`;
+  }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" })[c]); }
 
   // Expose API
   window.BWLayout = {

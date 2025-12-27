@@ -125,4 +125,55 @@ Notes
 - The chaos test modifies `worker/src/routes/templates.js` temporarily and restores it automatically.
 - Run the chaos test in a terminal with sufficient permissions; the script is designed to be cross-platform but needs `npx wrangler` available.
 
+## AI‑Powered Template Generation
+
+This repository includes a lightweight, deterministic AI placeholder for generating templates locally.
+
+- Endpoint: `POST /generate-template`
+- Request JSON: `{ "prompt": "Landing page for a fitness coach" }`
+- Response JSON shape:
+
+```
+{
+  "id": "generated-<hex>",
+  "name": "Short Title",
+  "description": "One sentence summary",
+  "sections": [ { ... } ],
+  "html": "<div>...</div>",
+  "css": "..."
+}
+```
+
+How the builder uses it:
+- The builder page exposes a "Generate with AI" button that opens a prompt modal.
+- The prompt is POSTed to `/generate-template` and the returned `html`/`css` are injected into the preview panel for live preview.
+- If the Worker is offline or the endpoint fails, the UI shows a friendly message and falls back to sample-data for templates.
+
+Future upgrade path:
+- Replace `worker/src/lib/ai.js` with an integration to a real AI provider (OpenAI, Anthropic, or your internal model). Keep the same `generateTemplate(prompt)` signature and return shape to remain compatible with the frontend.
+- Add server-side validation, rate limiting, authentication, and billing checks before allowing high-rate generation.
+
+## AI Generation Tests
+
+Unit and integration tests verify the deterministic AI helper and the Builder integration.
+
+- Run unit tests (Node's built-in test runner):
+
+```bash
+npm run test:ai
+```
+
+- Run integration tests (headless):
+
+```bash
+npm run test:builder
+```
+
+What they validate:
+- `tests/ai/generateTemplate.test.js` ensures `generateTemplate(prompt)` returns the expected shape and deterministic ids.
+- `tests/builder/generateTemplate.integration.js` posts prompts to `/generate-template`, validates responses, simulates worker downtime, checks fallback sample-data, and restores the Worker.
+
+These tests preserve the contract between the Worker and frontend and make it easier to replace the rule-based generator with a real AI provider in the future.
+
+
 

@@ -4,6 +4,7 @@ import * as versionRoute from "../routes/version.js";
 import * as featuresRoute from "../routes/features.js";
 import * as uiConfigRoute from "../routes/ui-config.js";
 import * as templatesRoute from "../routes/templates.js";
+import * as generateTemplateRoute from "../routes/generate-template.js";
 import * as announcementsRoute from "../routes/announcements.js";
 import { error as jsonError } from "./response.js";
 import { NotFoundError } from "./errors.js";
@@ -15,6 +16,7 @@ const routes = new Map([
   ["/features", featuresRoute],
   ["/ui-config", uiConfigRoute],
   ["/templates", templatesRoute],
+  ["/generate-template", generateTemplateRoute],
   ["/announcements", announcementsRoute],
 ]);
 

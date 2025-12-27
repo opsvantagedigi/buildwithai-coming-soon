@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "test:smoke": "node tests/smoke.js",
-    "test:chaos": "node tests/chaos.js"
+    "test:chaos": "node tests/chaos.js",
+    "test:ai": "node --test tests/ai/*.test.js",
+    "test:builder": "node tests/builder/generateTemplate.integration.js"
   }
 }
