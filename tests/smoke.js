@@ -14,7 +14,10 @@ const endpoints = [
 
 const sampleBase = path.join(__dirname, '..', 'assets', 'sample-data');
 
-function exit(code){ process.exit(code); }
+function exit(code){
+  // Windows libuv fix: allow async handles to close before exiting
+  setTimeout(() => process.exit(code), 50);
+}
 
 function log(...args){ console.log(...args); }
 function failMsg(endpoint, reason, details){
