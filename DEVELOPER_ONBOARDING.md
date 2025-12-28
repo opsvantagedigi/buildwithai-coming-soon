@@ -11,7 +11,7 @@ Install:
 
 - Node.js 20+
 - Git
-- Cloudflare CLI (Wrangler)
+- Cloudflare CLI (Wrangler)  # (removed—deployment instructions sanitized)
 - VS Code (recommended)
 - GitHub Copilot (optional but encouraged)
 
@@ -82,10 +82,7 @@ This starts:
 
 # 7. Deployment Workflow
 
-1. Push to GitHub  
-2. Cloudflare Pages deploys `/public`  
-3. Cloudflare Worker deploys `/worker`  
-4. DNS routes traffic to correct services  
+Deployment instructions have been removed to prepare this repository for a clean, fresh Worker deployment process. Add detailed deployment steps (Pages, Workers, DNS, CI) when account and domain choices are finalized.
 
 ---
 

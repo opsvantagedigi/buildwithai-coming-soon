@@ -1,40 +1,9 @@
-name = "buildwithai-api"
-main = "src/index.js"
-compatibility_date = "2025-12-28"
+# Worker wrangler configuration intentionally removed.
 
-# Set your Cloudflare account when ready (uncomment and fill):
-# account_id for deployments
-account_id = "12224d37d10e30bbc9341d6c0e2e71da"
+# This file previously contained Wrangler configuration for Cloudflare
+# deployments. To prepare this repository for a fresh Worker deployment,
+# the original contents have been cleared.
 
-# OPTIONAL: specify the worker type if required
-# type = "javascript"
-
-# -----------------------------
-# Binding examples (uncomment and fill the IDs when you add resources)
-# -----------------------------
-
-# KV namespace example
-# kv_namespaces = [
-#   { binding = "BUILDWITHAI_CACHE", id = "PASTE_KV_ID_HERE" }
-# ]
-
-# D1 database example
-## [[d1_databases]]
-## binding = "BUILDWITHAI_DB"
-## database_name = "buildwithai"
-## database_id = "PASTE_D1_ID_HERE"
-
-# R2 bucket example
- # r2_buckets = [
- #   { binding = "BUILDWITHAI_ASSETS", bucket_name = "buildwithai-assets" }
- # ]
-
-# AI binding example (depends on Cloudflare AI integration availability)
- # ai = { binding = "AI" }
-
-# Secrets: add via CLI
-# Example:
-# npx wrangler secret put OPENPROVIDER_API_KEY
-# npx wrangler secret put ALCHEMY_API_KEY
-# npx wrangler secret put INTERNAL_API_TOKEN
+# If/when you're ready to reintroduce Cloudflare Wrangler config, recreate
+# `worker/wrangler.toml` with required entries (name, account_id, bindings).
 

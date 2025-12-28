@@ -3,44 +3,13 @@
 This folder contains a minimal Cloudflare Worker scaffold for local development and deployment with Wrangler. The Worker is intentionally isolated under `worker/` so the repository root can remain a static Cloudflare Pages site.
 
 ## 1) Authentication
-Authenticate the Wrangler CLI (one-time):
-
-```bash
-npx wrangler login
-```
+Deployment/authentication instructions removed; configure your chosen deployment tool when ready.
 
 ## 2) Local development
-Run the following from the repository root or inside the `worker/` folder:
-
-```bash
-cd worker
-npm install
-npm run dev
-# or directly with wrangler:
-npx wrangler dev
-```
-
-Notes:
-- You can set a local `account_id` in `wrangler.toml` or pass `--account-id` to commands.
-- `wrangler dev` serves the Worker locally for testing.
+Run the Worker source locally using your preferred local runtime (Miniflare, Node adapter, etc.) and run tests as needed. No Wrangler-specific local instructions are included here.
 
 ## 3) Deployment
-Before deploying, set your Cloudflare `account_id` in `worker/wrangler.toml` (uncomment and fill the `account_id` field) or provide it via CLI.
-
-Deploy with:
-
-```bash
-cd worker
-npm run deploy
-# or
-npx wrangler deploy
-```
-
-Explicit account-id deploy (uses provided account):
-
-```bash
-npx wrangler deploy --account-id 12224d37d10e30bbc9341d6c0e2e71da
-```
+Deployment instructions removed. Add deployment tooling and steps when you're ready to configure accounts, routes, and DNS.
 
 ## 4) Bindings examples (edit `worker/wrangler.toml` and uncomment/fill IDs)
 
@@ -94,14 +63,7 @@ npx wrangler secret put INTERNAL_API_TOKEN
 ```
 
 ## 6) Scripts
-`worker/package.json` includes these scripts:
-
-```json
-"scripts": {
-  "dev": "wrangler dev",
-  "deploy": "wrangler deploy"
-}
-```
+Package scripts have been removed from `worker/package.json` to avoid accidental Wrangler usage. Reintroduce scripts only when you have a finalized deployment plan.
 
 ## 7) Final notes
 - Keep Worker files only inside `worker/` to avoid confusing Cloudflare Pages.
