@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUILD WITH AI — Domains</title>
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="/js/layout.js" defer></script>
+</head>
+<body>
+  <div class="bwai-page-shell">
+    <!-- HERO SECTION (dark cinematic) -->
+    <section class="bwai-hero bwai-hero--domains">
+      <div class="bwai-hero-copy">
+        <h1 class="bwai-hero-title">Find the perfect domain for your vision</h1>
+        <p class="bwai-hero-subtitle">Search availability, compare pricing, and register instantly</p>
+        <div class="bwai-hero-cta">
+          <a href="https://builder.buildwithai.digital" class="bwai-btn bwai-btn--primary">Open Builder</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOMAIN SEARCH SECTION (light glass panel) -->
+    <section class="bwai-surface-card bwai-domain-search-panel">
+      <form class="bwai-form" id="domain-search-form" autocomplete="off">
+        <label for="domain-input" class="bwai-label">Domain Search</label>
+        <div class="bwai-form-row">
+          <input type="text" id="domain-input" class="bwai-input" placeholder="yourdomain.com" required />
+          <button type="submit" id="domain-search-btn" class="bwai-btn bwai-btn--primary">Search</button>
+        </div>
+      </form>
+      <div id="domain-result" class="bwai-domain-result"></div>
+    </section>
+
+    <!-- DOMAIN PRICING TABLE -->
+    <section class="bwai-surface-card-grid bwai-domain-pricing-panel">
+      <h2 class="bwai-section-title">Domain Pricing</h2>
+      <div id="domain-pricing-table" class="bwai-table"></div>
+    </section>
+
+    <!-- DOMAIN REGISTRATION SECTION -->
+    <section class="bwai-surface-card bwai-domain-register-panel">
+      <h2 class="bwai-section-title">Register Domain</h2>
+      <form class="bwai-form" id="domain-register-form" autocomplete="off">
+        <div class="bwai-form-row">
+          <input type="text" name="name" class="bwai-input" placeholder="Full Name" required />
+          <input type="email" name="email" class="bwai-input" placeholder="Email" required />
+        </div>
+        <div class="bwai-form-row">
+          <input type="tel" name="phone" class="bwai-input" placeholder="Phone" required />
+          <input type="text" name="address" class="bwai-input" placeholder="Address" required />
+        </div>
+        <div class="bwai-form-row">
+          <input type="text" name="nameservers" class="bwai-input" placeholder="Nameservers (optional)" />
+        </div>
+        <button type="submit" class="bwai-btn bwai-btn--primary">Register Domain</button>
+      </form>
+      <div id="domain-register-result" class="bwai-domain-register-result"></div>
+    </section>
+
+    <!-- WHOIS LOOKUP SECTION -->
+    <section class="bwai-surface-card bwai-domain-whois-panel">
+      <h2 class="bwai-section-title">WHOIS Lookup</h2>
+      <form class="bwai-form" id="domain-whois-form" autocomplete="off">
+        <div class="bwai-form-row">
+          <input type="text" id="whois-domain-input" class="bwai-input" placeholder="domain.com" required />
+          <button type="submit" class="bwai-btn bwai-btn--primary">Check WHOIS</button>
+        </div>
+      </form>
+      <div id="domain-whois-result" class="bwai-domain-whois-result"></div>
+    </section>
+
+    <!-- CTA SECTION (cinematic gradient strip) -->
+    <section class="bwai-cta-strip bwai-cta-strip--domains">
+      <div>
+        <strong>Build your site with AI</strong>
+      </div>
+      <div class="bwai-cta-actions">
+        <a href="https://builder.buildwithai.digital" class="bwai-btn bwai-btn--primary">Launch Builder</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bwai-footer">
+    <div class="bwai-footer-inner">
+      <div>© 2025 BUILD WITH AI — Domains</div>
+      <div class="bwai-footer-links">
+        <a href="/pricing.html">Pricing</a>
+        <a href="/domains.html">Domains</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/privacy.html">Privacy</a>
+      </div>
+      <div class="bwai-footer-env">Powered by OpenProvider</div>
+    </div>
+  </footer>
+</body>
+</html>

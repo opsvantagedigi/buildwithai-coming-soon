@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUILD WITH AI — Template Builder</title>
+
+  <!-- Global Design System -->
+  <link rel="stylesheet" href="/css/layout.css" />
+
+  <!-- Global Interactivity Layer -->
+  <script src="/js/layout.js" defer></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+  <div class="bwai-page-shell">
+
+    <!-- Navigation -->
+    <header class="bwai-nav">
+      <div class="bwai-nav-left">
+        <div class="bwai-brand-mark">
+          <div class="bwai-brand-mark-inner">AI</div>
+        </div>
+        <div class="bwai-brand-text">
+          <div class="bwai-brand-name">BUILD WITH AI</div>
+          <div class="bwai-brand-tagline">Templates for legacy-grade experiences</div>
+        </div>
+      </div>
+
+      <nav class="bwai-nav-links">
+        <a href="/builder.html" class="bwai-nav-link bwai-nav-link--active">Builder</a>
+        <a href="/dashboard.html" class="bwai-nav-link">Dashboard</a>
+        <a href="/docs.html" class="bwai-nav-link">Docs</a>
+        <a href="/api.html" class="bwai-nav-link">API</a>
+      </nav>
+
+      <div class="bwai-nav-pill">
+        Alpha channel <span>live in dev</span>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bwai-hero">
+
+      <div class="bwai-hero-copy">
+        <div class="bwai-hero-eyebrow">
+          <span class="bwai-hero-eyebrow-dot"></span>
+          <span>AI Builder • Layouts in seconds</span>
+        </div>
+
+        <h1 class="bwai-hero-title">
+          Launch <span class="bwai-hero-title-highlight">client‑ready sites</span><br />
+          from a single AI prompt.
+        </h1>
+
+        <p class="bwai-hero-subtitle">
+          Answer a few questions about your client, and BUILD WITH AI assembles a mobile‑ready layout, starter copy,
+          and page structure that your team can refine, not rebuild.
+        </p>
+
+        <div class="bwai-hero-actions">
+          <button class="bwai-btn bwai-btn--primary" id="btn-start-ai">
+            <span class="bwai-btn--icon">▶</span>
+            Start with AI
+          </button>
+
+          <button class="bwai-btn bwai-btn--secondary" id="btn-browse-templates">
+            Browse templates
+          </button>
+        </div>
+
+        <div class="bwai-hero-meta">
+          <span><span class="bwai-hero-meta-dot"></span> No code required for first draft</span>
+          <span><span class="bwai-hero-meta-dot"></span> Optimized for fast client approvals</span>
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="bwai-hero-preview-wrap">
+        <div class="bwai-hero-preview-glow"></div>
+
+        <div class="bwai-hero-preview">
+          <div class="bwai-preview-browser-bar">
+            <div class="bwai-preview-dots">
+              <span class="bwai-preview-dot"></span>
+              <span class="bwai-preview-dot"></span>
+              <span class="bwai-preview-dot"></span>
+            </div>
+            <div class="bwai-preview-url">builder.local / preview</div>
+          </div>
+
+          <div class="bwai-preview-canvas">
+            <div class="bwai-preview-pill">AI preview</div>
+
+            <div class="bwai-preview-heading">
+              “Generated <span>Starter Site</span> for wellness studio”
+            </div>
+
+            <div class="bwai-preview-grid">
+              <div class="bwai-preview-column">
+                <div>Hero section, services strip, story block, testimonials, and a conversion‑ready footer.</div>
+                <div class="bwai-preview-chip-row">
+                  <div class="bwai-preview-chip">Hero + CTA</div>
+                  <div class="bwai-preview-chip bwai-preview-chip--alt">Service grid</div>
+                  <div class="bwai-preview-chip">Story section</div>
+                  <div class="bwai-preview-chip bwai-preview-chip--alt">Testimonials</div>
+                </div>
+              </div>
+
+              <div class="bwai-preview-column">
+                <div>Adjust brand colors, typography, and layout in your builder — the AI handles the heavy lifting.</div>
+                <div class="bwai-preview-chip-row">
+                  <div class="bwai-preview-chip bwai-preview-chip--alt">Brand colors mapped</div>
+                  <div class="bwai-preview-chip">Mobile responsive</div>
+                  <div class="bwai-preview-chip bwai-preview-chip--alt">Copy draft included</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bwai-preview-footer-row">
+              <div class="bwai-preview-status">
+                <span class="bwai-preview-status-dot"></span>
+                <span>Layout ready in under 60 seconds</span>
+              </div>
+
+              <a href="#" class="bwai-preview-link" id="preview-cta-link">
+                View as full template →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Meta Row -->
+    <section class="bwai-meta-row">
+      <div class="bwai-meta-summary">
+        <span class="bwai-meta-highlight">Built for agencies and operators</span> who want AI assistance
+        without giving up control of the final experience.
+      </div>
+
+      <div class="bwai-meta-logos">
+        <span class="bwai-meta-logo-pill">Fast first drafts</span>
+        <span class="bwai-meta-logo-pill">Client‑ready structure</span>
+        <span class="bwai-meta-logo-pill">Export‑friendly templates</span>
+      </div>
+    </section>
+
+    <!-- Templates + Steps -->
+    <section class="bwai-content-grid">
+      <div style="margin-bottom:2rem;">
+        <button id="open-domain-modal" class="bwai-btn bwai-btn--primary">Secure your domain</button>
+      </div>
+
+      <!-- Templates -->
+      <div>
+        <div class="bwai-section-header">Templates</div>
+        <div class="bwai-section-title">Start from a focused, AI‑friendly base.</div>
+        <div class="bwai-section-body">
+          Choose a starting point that matches your client’s intent, then let AI adapt the layout and content around it.
+        </div>
+
+        <div class="bwai-template-list" id="template-list">
+
+          <div class="bwai-template-item" data-template-id="starter">
+            <div class="bwai-template-main">
+              <div class="bwai-template-name">Starter</div>
+              <div class="bwai-template-desc">Single-page layout for personal brands, coaches, and early‑stage founders.</div>
+            </div>
+            <div class="bwai-template-tag">Recommended</div>
+          </div>
+
+          <div class="bwai-template-item" data-template-id="saas">
+            <div class="bwai-template-main">
+              <div class="bwai-template-name">SaaS Launch</div>
+              <div class="bwai-template-desc">Hero, feature grid, pricing, and FAQ for product launches and beta programs.</div>
+            </div>
+            <div class="bwai-template-tag">Product teams</div>
+          </div>
+
+          <div class="bwai-template-item" data-template-id="studio">
+            <div class="bwai-template-main">
+              <div class="bwai-template-name">Studio Portfolio</div>
+              <div class="bwai-template-desc">Case‑study‑driven layout for agencies, studios, and creative collectives.</div>
+            </div>
+            <div class="bwai-template-tag">Portfolio</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div>
+        <div class="bwai-section-header">How it works</div>
+        <div class="bwai-section-title">A builder that respects your process.</div>
+        <div class="bwai-section-body">
+          BUILD WITH AI is designed to slot into your existing review and approval rituals, not replace them.
+        </div>
+
+        <div class="bwai-steps-list">
+
+          <div class="bwai-step-item">
+            <div class="bwai-step-badge">1</div>
+            <div class="bwai-step-copy">
+              <strong>Choose a starting template.</strong><br />
+              Select a layout that matches the engagement — launch, relaunch, or quick validation.
+            </div>
+          </div>
+
+          <div class="bwai-step-item">
+            <div class="bwai-step-badge">2</div>
+            <div class="bwai-step-copy">
+              <strong>Describe the client and intent.</strong><br />
+              Provide a brief, tone, and key sections. The AI assembles structure, copy, and layout suggestions.
+            </div>
+          </div>
+
+          <div class="bwai-step-item">
+            <div class="bwai-step-badge">3</div>
+            <div class="bwai-step-copy">
+              <strong>Refine inside your builder.</strong><br />
+              Edit, swap modules, and export — keeping your team in control of every final decision.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- CTA Strip -->
+    <section class="bwai-cta-strip">
+      <div>
+        <strong>Ready to see BUILD WITH AI in motion?</strong><br />
+        Use AI for the heavy lifting, keep humans for the moments that matter.
+      </div>
+
+      <div class="bwai-cta-actions">
+        <button class="bwai-btn bwai-btn--primary" id="cta-start-ai">
+          Start an AI draft
+        </button>
+
+        <button class="bwai-btn bwai-btn--secondary" id="cta-open-dashboard">
+          Open dashboard
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="bwai-footer">
+    <div class="bwai-footer-inner">
+      <div>© 2025 BUILD WITH AI — Templates for legacy builders.</div>
+
+      <div class="bwai-footer-links">
+        <a href="/docs.html">Docs</a>
+        <a href="/api.html">API</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+
+      <div class="bwai-footer-env">Dev: npm run dev</div>
+    </div>
+  </footer>
+
+</body>
+
+<!-- DOMAIN PURCHASE MODAL -->
+<div id="domain-modal" class="bwai-modal hidden">
+      <!-- DNS Provisioning Panel -->
+      <div id="dns-panel" class="bwai-surface-card hidden bwai-layout-stack-md">
+        <h3 class="bwai-section-title">DNS Provisioning</h3>
+        <p class="bwai-body-text">
+          Connect your domain to your AI‑generated website.
+        </p>
+        <div class="bwai-form bwai-layout-stack-sm">
+          <input id="dns-a-record" class="bwai-input" placeholder="A Record IP (e.g., 1.2.3.4)" />
+        </div>
+        <button id="dns-submit-btn" class="bwai-btn bwai-btn-primary">Provision DNS</button>
+        <div id="dns-status" class="bwai-status-text"></div>
+      </div>
+  <div class="bwai-modal-backdrop"></div>
+  <div class="bwai-modal-panel bwai-surface-card">
+    <h2 class="bwai-modal-title">Secure your domain</h2>
+    <p class="bwai-modal-subtitle">Search availability and register instantly</p>
+    <div class="bwai-form">
+      <input id="modal-domain-input" class="bwai-input" placeholder="yourdomain.com" />
+      <button id="modal-domain-search-btn" class="bwai-btn bwai-btn-primary">Check Availability</button>
+    </div>
+    <div id="modal-domain-result" class="bwai-domain-result"></div>
+
+    <!-- Domain Registration Panel -->
+    <div id="domain-registration-panel" class="bwai-surface-card hidden bwai-layout-stack-md">
+      <h3 class="bwai-section-title">Register Domain</h3>
+      <div class="bwai-form bwai-layout-stack-sm">
+        <input id="reg-name" class="bwai-input" placeholder="Full Name" />
+        <input id="reg-email" class="bwai-input" placeholder="Email Address" />
+        <input id="reg-phone" class="bwai-input" placeholder="Phone Number" />
+        <input id="reg-address" class="bwai-input" placeholder="Address" />
+        <input id="reg-ns1" class="bwai-input" placeholder="Nameserver 1 (optional)" />
+        <input id="reg-ns2" class="bwai-input" placeholder="Nameserver 2 (optional)" />
+      </div>
+      <button id="reg-submit-btn" class="bwai-btn bwai-btn-primary">Register Domain</button>
+      <div id="reg-status" class="bwai-status-text"></div>
+    </div>
+
+    <button id="modal-close-btn" class="bwai-btn bwai-btn-secondary">Close</button>
+
+    <!-- WHOIS Lookup Panel -->
+    <div id="whois-panel" class="bwai-surface-card hidden bwai-layout-stack-md">
+      <h3 class="bwai-section-title">WHOIS Lookup</h3>
+      <div class="bwai-form bwai-layout-stack-sm">
+        <input id="whois-domain-input" class="bwai-input" placeholder="domain.com" />
+        <button id="whois-check-btn" class="bwai-btn bwai-btn-primary">Check WHOIS</button>
+      </div>
+      <div id="whois-result" class="bwai-status-text"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     AI MODAL SYSTEM — BUILD WITH AI
+     ========================================================= -->
+<div class="bwai-ai-modal-overlay" id="ai-modal-overlay">
+  <div class="bwai-ai-modal">
+
+    <!-- Modal Header -->
+    <div class="bwai-ai-modal-header">
+      <h2 class="bwai-ai-modal-title">Generate with AI</h2>
+      <button class="bwai-ai-modal-close" id="ai-modal-close">×</button>
+    </div>
+
+    <!-- Step 1: Form -->
+    <div class="bwai-ai-modal-step" id="ai-step-form">
+      <p class="bwai-ai-modal-subtitle">
+        Tell the AI about your client so it can generate a tailored layout.
+      </p>
+
+      <div class="bwai-ai-form">
+        <label>Client Type</label>
+        <input type="text" id="ai-client-type" placeholder="e.g., Wellness Studio, SaaS Startup" />
+
+        <label>Industry</label>
+        <input type="text" id="ai-industry" placeholder="e.g., Health, Finance, Coaching" />
+
+        <label>Tone</label>
+        <select id="ai-tone">
+          <option value="professional">Professional</option>
+          <option value="friendly">Friendly</option>
+          <option value="luxury">Luxury</option>
+          <option value="bold">Bold</option>
+        </select>
+
+        <label>Brand Colors</label>
+        <input type="text" id="ai-colors" placeholder="e.g., Blue, Gold, White" />
+
+        <label>Required Sections</label>
+        <input type="text" id="ai-sections" placeholder="e.g., Hero, Services, Testimonials" />
+
+        <label>Additional Notes</label>
+        <textarea id="ai-notes" placeholder="Anything else the AI should know"></textarea>
+      </div>
+
+      <button class="bwai-btn bwai-btn--primary bwai-ai-modal-next" id="ai-start-generation">
+        Generate Layout
+      </button>
+    </div>
+
+    <!-- Step 2: Loading -->
+    <div class="bwai-ai-modal-step" id="ai-step-loading" style="display:none;">
+      <p class="bwai-ai-modal-subtitle">Generating your layout…</p>
+
+      <div class="bwai-ai-skeleton">
+        <div class="bwai-ai-skeleton-block"></div>
+        <div class="bwai-ai-skeleton-block"></div>
+        <div class="bwai-ai-skeleton-block short"></div>
+      </div>
+    </div>
+
+    <!-- Step 3: Result -->
+    <div class="bwai-ai-modal-step" id="ai-step-result" style="display:none;">
+      <p class="bwai-ai-modal-subtitle">Your AI‑generated layout is ready.</p>
+
+      <div class="bwai-ai-result" id="ai-result"></div>
+
+      <div class="bwai-ai-result-actions">
+        <button class="bwai-btn bwai-btn--secondary" id="ai-regenerate">Regenerate</button>
+        <button class="bwai-btn bwai-btn--primary" id="ai-apply-template">Apply to Builder</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</html>

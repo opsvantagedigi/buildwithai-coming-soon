@@ -1,6 +1,6 @@
-name = "buildwithai-worker"
-compatibility_date = "2025-12-27"
+name = "buildwithai-api"
 main = "src/index.js"
+compatibility_date = "2025-12-28"
 
 # Set your Cloudflare account when ready (uncomment and fill):
 # account_id for deployments

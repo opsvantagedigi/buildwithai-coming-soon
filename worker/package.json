@@ -5,5 +5,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "vite": "^7.3.0"
   }
 }

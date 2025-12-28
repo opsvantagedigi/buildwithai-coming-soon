@@ -1,42 +1,48 @@
-import { handle } from "./utils/router.js";
-import { error as jsonError } from "./utils/response.js";
-import { handleOptions, corsHeaders } from "./middleware/cors.js";
-import { startLog, endLog } from "./middleware/logging.js";
-import { auth } from "./middleware/auth.js";
-import { rateLimit } from "./middleware/rateLimit.js";
+
+
+import domainCheck from "./routes/domain-check.js";
+import domainPricing from "./routes/domain-pricing.js";
+import domainRegister from "./routes/domain-register.js";
+import domainWhois from "./routes/domain-whois.js";
 
 export default {
-  async fetch(request, env) {
-    const logMeta = startLog(request);
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const path = url.pathname;
 
-    // Handle OPTIONS early (CORS preflight)
-    const opt = handleOptions(request);
-    if (opt) return opt;
-
-    // Auth middleware (may return Response)
-    const authResp = await auth(request, env);
-    if (authResp) return appendCors(authResp);
-
-    // Rate limiting (may return Response)
-    const rlResp = await rateLimit(request, env);
-    if (rlResp) return appendCors(rlResp);
-
-    try {
-      const res = await handle(request, env);
-      const withCors = appendCors(res);
-      endLog(logMeta);
-      return withCors;
-    } catch (err) {
-      endLog(logMeta);
-      return jsonError(err?.message || "Internal error", err?.status || 500);
+    // /domain/check
+    if (path === "/domain/check") {
+      if (request.method !== "POST") {
+        return new Response("Method Not Allowed", { status: 405 });
+      }
+      return domainCheck.fetch(request, env, ctx);
     }
-  },
-};
 
-function appendCors(response) {
-  const headers = corsHeaders();
-  for (const k of Object.keys(headers)) {
-    if (!response.headers.has(k)) response.headers.set(k, headers[k]);
+    // /domain/pricing
+    if (path === "/domain/pricing") {
+      if (request.method !== "GET") {
+        return new Response("Method Not Allowed", { status: 405 });
+      }
+      return domainPricing.fetch(request, env, ctx);
+    }
+
+    // /domain/register
+    if (path === "/domain/register") {
+      if (request.method !== "POST") {
+        return new Response("Method Not Allowed", { status: 405 });
+      }
+      return domainRegister.fetch(request, env, ctx);
+    }
+
+    // /domain/whois
+    if (path === "/domain/whois") {
+      if (request.method !== "POST") {
+        return new Response("Method Not Allowed", { status: 405 });
+      }
+      return domainWhois.fetch(request, env, ctx);
+    }
+
+    // Default 404
+    return new Response("Not Found", { status: 404 });
   }
-  return response;
-}
+};

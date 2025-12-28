@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUILD WITH AI — Pricing</title>
+  <link rel="stylesheet" href="/css/layout.css" />
+  <style>
+    body {
+      background: linear-gradient(120deg, #0f2027 0%, #2c5364 100%);
+      min-height: 100vh;
+    }
+    .bwai-hero {
+      background: linear-gradient(120deg, rgba(44,83,100,0.85) 0%, rgba(15,32,39,0.85) 100%);
+      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+      border-radius: 32px;
+      margin: 2rem auto 0 auto;
+      max-width: 900px;
+      padding: 3rem 2rem 2rem 2rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .bwai-pricing-table {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin: 3rem 0;
+    }
+    .bwai-pricing-tier {
+      background: rgba(255,255,255,0.08);
+      border-radius: 24px;
+      box-shadow: 0 4px 24px 0 rgba(31,38,135,0.17);
+      padding: 2rem 1.5rem;
+      min-width: 260px;
+      flex: 1;
+      color: #fff;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .bwai-pricing-tier--featured {
+      background: linear-gradient(120deg, #43cea2 0%, #185a9d 100%);
+      color: #fff;
+      box-shadow: 0 8px 32px 0 rgba(67,206,162,0.25);
+      transform: scale(1.05);
+      z-index: 2;
+      border: 2px solid #43cea2;
+    }
+    .bwai-pricing-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px rgba(67,206,162,0.15);
+    }
+    .bwai-pricing-price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #43cea2;
+      text-shadow: 0 2px 8px rgba(67,206,162,0.25);
+    }
+    .bwai-pricing-tier--featured .bwai-pricing-price {
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(24,90,157,0.25);
+    }
+    .bwai-pricing-features {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1.5rem;
+    }
+    .bwai-pricing-features li {
+      margin-bottom: 0.7rem;
+      font-size: 1rem;
+      position: relative;
+      padding-left: 1.2em;
+    }
+    .bwai-pricing-features li:before {
+      content: '✔';
+      position: absolute;
+      left: 0;
+      color: #43cea2;
+      font-size: 1em;
+    }
+    .bwai-pricing-cta {
+      text-align: center;
+    }
+    .bwai-btn--primary {
+      background: linear-gradient(120deg, #43cea2 0%, #185a9d 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7em 2em;
+      font-size: 1.1em;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(67,206,162,0.15);
+      transition: background 0.2s;
+    }
+    .bwai-btn--primary:hover {
+      background: linear-gradient(120deg, #185a9d 0%, #43cea2 100%);
+    }
+    .bwai-btn--secondary {
+      background: rgba(255,255,255,0.15);
+      color: #43cea2;
+      border: 1px solid #43cea2;
+      border-radius: 8px;
+      padding: 0.7em 2em;
+      font-size: 1.1em;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(67,206,162,0.10);
+      transition: background 0.2s, color 0.2s;
+    }
+    .bwai-btn--secondary:hover {
+      background: #43cea2;
+      color: #fff;
+    }
+    .bwai-surface-card {
+      background: rgba(255,255,255,0.10);
+      border-radius: 18px;
+      box-shadow: 0 2px 12px 0 rgba(31,38,135,0.12);
+      color: #fff;
+      margin-top: 2rem;
+      padding: 2rem;
+      max-width: 340px;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .bwai-cta-strip {
+      background: linear-gradient(120deg, #43cea2 0%, #185a9d 100%);
+      color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px 0 rgba(67,206,162,0.15);
+      margin: 3rem auto 2rem auto;
+      max-width: 900px;
+      padding: 2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.2em;
+    }
+    .bwai-cta-actions {
+      display: flex;
+      gap: 1rem;
+    }
+    .bwai-footer {
+      background: rgba(15,32,39,0.95);
+      color: #fff;
+      padding: 2rem 0 1rem 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 -2px 12px 0 rgba(31,38,135,0.10);
+    }
+    .bwai-footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1em;
+    }
+    .bwai-footer-links a {
+      color: #43cea2;
+      margin: 0 0.7em;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .bwai-footer-links a:hover {
+      color: #fff;
+    }
+    @media (max-width: 900px) {
+      .bwai-pricing-table {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .bwai-hero, .bwai-cta-strip {
+        max-width: 98vw;
+        padding: 2rem 1rem;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="/js/layout.js" defer></script>
+</head>
+<body>
+  <div class="bwai-page-shell" style="backdrop-filter: blur(2px);">
+    <!-- NAV -->
+    <header class="bwai-nav">
+      <div class="bwai-nav-left">
+        <div class="bwai-brand-mark"><div class="bwai-brand-mark-inner">AI</div></div>
+        <div class="bwai-brand-text">
+          <div class="bwai-brand-name">BUILD WITH AI</div>
+          <div class="bwai-brand-tagline">Pricing & Plans</div>
+        </div>
+      </div>
+      <nav class="bwai-nav-links">
+        <a href="/" class="bwai-nav-link">Home</a>
+        <a href="/pricing.html" class="bwai-nav-link bwai-nav-link--active">Pricing</a>
+        <a href="/domains.html" class="bwai-nav-link">Domains</a>
+        <a href="https://builder.buildwithai.digital" class="bwai-nav-link">Builder</a>
+      </nav>
+      <div class="bwai-nav-pill">Powered by <span>OpenProvider</span></div>
+    </header>
+
+    <!-- HERO -->
+    <section class="bwai-hero">
+      <div class="bwai-hero-copy">
+        <div class="bwai-hero-eyebrow"><span class="bwai-hero-eyebrow-dot"></span><span>Transparent Pricing</span></div>
+        <h1 class="bwai-hero-title" style="font-family: 'Orbitron', sans-serif; font-size: 2.7rem; font-weight: 700; letter-spacing: 2px; color: #43cea2; text-shadow: 0 2px 16px rgba(67,206,162,0.25);">Choose your plan and launch faster.</h1>
+        <p class="bwai-hero-subtitle" style="font-size: 1.3rem; color: #fff; text-shadow: 0 2px 8px rgba(67,206,162,0.15);">Simple, agency-grade pricing for AI websites and domains. No hidden fees.</p>
+      </div>
+    </section>
+
+    <!-- PRICING TABLE -->
+    <section class="bwai-content-grid">
+      <div class="bwai-pricing-table">
+        <div class="bwai-pricing-tier" style="border: 1px solid #43cea2;">
+          <div class="bwai-pricing-header">AI Builder</div>
+          <div class="bwai-pricing-price">$19<span>/site</span></div>
+          <ul class="bwai-pricing-features">
+            <li>AI-generated layout & copy</li>
+            <li>Mobile-ready design</li>
+            <li>Export to HTML</li>
+            <li>Unlimited revisions</li>
+          </ul>
+          <div class="bwai-pricing-cta">
+            <a href="https://builder.buildwithai.digital" class="bwai-btn bwai-btn--primary">Start Building</a>
+          </div>
+        </div>
+        <div class="bwai-pricing-tier bwai-pricing-tier--featured">
+          <div class="bwai-pricing-header">Domain + Builder Bundle</div>
+          <div class="bwai-pricing-price">$29<span>/site + domain</span></div>
+          <ul class="bwai-pricing-features">
+            <li>Everything in AI Builder</li>
+            <li>1 year domain registration (.com, .net, .digital)</li>
+            <li>Instant domain setup</li>
+            <li>WHOIS privacy included</li>
+          </ul>
+          <div class="bwai-pricing-cta">
+            <a href="/domains.html" class="bwai-btn bwai-btn--primary" style="box-shadow: 0 2px 16px 0 rgba(67,206,162,0.25);">Get Bundle</a>
+          </div>
+        </div>
+        <div class="bwai-pricing-tier">
+          <div class="bwai-pricing-header">Agency Plan</div>
+          <div class="bwai-pricing-price">$99<span>/mo</span></div>
+          <ul class="bwai-pricing-features">
+            <li>Unlimited sites</li>
+            <li>Unlimited domains</li>
+            <li>Team dashboard</li>
+            <li>Priority support</li>
+          </ul>
+          <div class="bwai-pricing-cta">
+            <a href="/dashboard.html" class="bwai-btn bwai-btn--secondary" style="box-shadow: 0 2px 8px 0 rgba(67,206,162,0.10);">Contact Sales</a>
+          </div>
+        </div>
+      </div>
+      <div class="bwai-surface-card bwai-layout-stack-lg">
+        <h2 style="font-family: 'Orbitron', sans-serif; color: #43cea2; font-size: 1.3rem;">OpenProvider Upsell</h2>
+        <p class="bwai-text-muted" style="color: #fff;">Get wholesale domain pricing and instant registration with our OpenProvider integration. Perfect for agencies and power users.</p>
+        <ul class="bwai-layout-stack-md" style="color: #43cea2;">
+          <li>✔ Wholesale pricing</li>
+          <li>✔ Fast domain setup</li>
+          <li>✔ WHOIS privacy</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CTA TO BUILDER -->
+    <section class="bwai-cta-strip">
+      <div>
+        <strong style="font-size: 1.3em; color: #fff;">Ready to build your site?</strong><br />
+        <span style="color: #fff;">Start with AI, secure your domain, and launch today.</span>
+      </div>
+      <div class="bwai-cta-actions">
+        <a href="https://builder.buildwithai.digital" class="bwai-btn bwai-btn--primary" style="box-shadow: 0 2px 16px 0 rgba(67,206,162,0.25);">Open Builder</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bwai-footer">
+    <div class="bwai-footer-inner">
+      <div>© 2025 BUILD WITH AI — Pricing & Plans</div>
+      <div class="bwai-footer-links">
+        <a href="/pricing.html">Pricing</a>
+        <a href="/domains.html">Domains</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+      <div class="bwai-footer-env">Powered by OpenProvider</div>
+    </div>
+  </footer>
+</body>
+</html>

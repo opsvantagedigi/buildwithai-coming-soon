@@ -31,10 +31,16 @@
     // If primary failed, and we're not already talking to the worker dev server,
     // try the worker dev origin which runs on 127.0.0.1:8787 during local development.
     try{
-      const isLocalhost = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
-      const onWorkerPort = location.hostname === '127.0.0.1' && String(location.port) === '8787';
-      if(!onWorkerPort){
-        const workerUrl = `http://${'127.0.0.1'}:8787${primaryUrl.startsWith('/') ? primaryUrl : '/' + primaryUrl}`;
+      // If page is served from file:// we can't use the primary origin — try worker dev directly.
+      const tryHosts = ['127.0.0.1', 'localhost'];
+      const tried = new Set();
+      for(const host of tryHosts){
+        // avoid trying the same origin we're already on
+        const onWorkerPort = (location.hostname === host && String(location.port) === '8787');
+        if(onWorkerPort) continue;
+        if(tried.has(host)) continue;
+        tried.add(host);
+        const workerUrl = `http://${host}:8787${primaryUrl.startsWith('/') ? primaryUrl : '/' + primaryUrl}`;
         try{
           const wr = await fetch(workerUrl);
           if(wr.ok){ console.info('Fetched from worker dev at', workerUrl); return await wr.json(); }
