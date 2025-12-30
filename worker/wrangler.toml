@@ -1,9 +1,4 @@
-# Worker wrangler configuration intentionally removed.
-
-# This file previously contained Wrangler configuration for Cloudflare
-# deployments. To prepare this repository for a fresh Worker deployment,
-# the original contents have been cleared.
-
-# If/when you're ready to reintroduce Cloudflare Wrangler config, recreate
-# `worker/wrangler.toml` with required entries (name, account_id, bindings).
+name = "buildwithai-api"
+main = "src/index.js"
+compatibility_date = "2025-12-28"
 
