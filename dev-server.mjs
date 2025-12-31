@@ -55,5 +55,5 @@ const server = createServer(async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, '127.0.0.1', () => console.log(`Dev API server listening on http://127.0.0.1:${PORT}`));

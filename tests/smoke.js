@@ -5,11 +5,11 @@ const path = require('path');
 const ALLOW_OFFLINE = !!process.env.ALLOW_OFFLINE;
 
 const endpoints = [
-  { url: 'http://127.0.0.1:8787/ui-config', name: 'ui-config', required: ['hero', 'theme'] },
-  { url: 'http://127.0.0.1:8787/templates', name: 'templates', required: ['templates'] },
-  { url: 'http://127.0.0.1:8787/announcements', name: 'announcements', required: ['announcements'] },
-  { url: 'http://127.0.0.1:8787/version', name: 'version', required: ['version', 'timestamp'] },
-  { url: 'http://127.0.0.1:8787/health', name: 'health', required: ['status'] }
+  { url: 'http://127.0.0.1:3000/api/ui-config', name: 'ui-config', required: ['hero', 'theme'] },
+  { url: 'http://127.0.0.1:3000/api/templates', name: 'templates', required: ['templates'] },
+  { url: 'http://127.0.0.1:3000/api/announcements', name: 'announcements', required: ['announcements'] },
+  { url: 'http://127.0.0.1:3000/api/version', name: 'version', required: ['version', 'timestamp'] },
+  { url: 'http://127.0.0.1:3000/api/health', name: 'health', required: ['status'] }
 ];
 
 const sampleBase = path.join(__dirname, '..', 'assets', 'sample-data');

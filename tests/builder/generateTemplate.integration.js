@@ -2,65 +2,34 @@ const { spawn, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const workerDir = path.join(__dirname, '..', '..', 'worker');
-const serverUrl = 'http://127.0.0.1:8787';
+const { spawn } = require('child_process');
+const path = require('path');
+const serverUrl = 'http://127.0.0.1:3000';
 
-function isWorkerRunning(){
-  try{ const out = execSync('netstat -ano | findstr :8787').toString(); return out.includes('LISTENING') }catch(e){ return false }
-}
-
-function killWorker(){
-  try{
-    const out = execSync('netstat -ano | findstr :8787').toString();
-    const lines = out.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
-    // Find the LISTENING line first
-    let pid = null;
-    for(const line of lines){
-      if(/LISTENING/i.test(line)){
-        const parts = line.split(/\s+/);
-        pid = parts[parts.length-1];
-        break;
-      }
-    }
-    if(!pid && lines.length>0){ // fallback to last token of first line
-      const parts = lines[0].split(/\s+/);
-      pid = parts[parts.length-1];
-    }
-    if(pid){
-      const myPid = String(process.pid);
-      if(pid === myPid){ console.log('killWorker: skipping killing current process', pid); return }
-      console.log('Killing wrangler dev (PID', pid, ')');
-      execSync(`taskkill /PID ${pid} /F`);
-    }
-  }catch(e){}
-}
-
-function startWorker(){
-  const p = spawn('npx', ['wrangler','dev'], { cwd: workerDir, shell:true, stdio:['ignore','pipe','pipe'] });
-  p.stdout.on('data', d => process.stdout.write(`[wrangler] ${d}`));
-  p.stderr.on('data', d => process.stderr.write(`[wrangler] ${d}`));
+function startServer(){
+  const p = spawn('node', ['dev-server.mjs'], { cwd: path.join(__dirname, '..', '..'), shell:true, stdio:['ignore','pipe','pipe'] });
+  p.stdout.on('data', d => process.stdout.write(`[dev] ${d}`));
+  p.stderr.on('data', d => process.stderr.write(`[dev] ${d}`));
   return p;
 }
 
-async function waitForWorker(timeout=20000){
+async function waitForServer(timeout=20000){
   const start = Date.now();
   while(Date.now()-start < timeout){
-    try{ const r = await fetch(serverUrl + '/health'); if(r.ok) return true }catch(e){}
+    try{ const r = await fetch(serverUrl + '/api/health'); if(r && r.ok) return true }catch(e){}
     await new Promise(r=>setTimeout(r,500));
   }
   return false;
 }
 
 async function postPrompt(prompt){
-  const res = await fetch(serverUrl + '/generate-template', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ prompt }) });
+  const res = await fetch(serverUrl + '/api/generate-template', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ prompt }) });
   return res;
 }
 
 async function run(){
   console.log('Integration test started');
-  const runningBefore = isWorkerRunning();
-  let proc = null;
-  if(!runningBefore){ proc = startWorker(); const ok = await waitForWorker(); if(!ok){ console.error('Worker did not start'); process.exit(1) } }
+  let proc = startServer(); const ok = await waitForServer(); if(!ok){ console.error('Dev server did not start'); process.exit(1) }
 
   // POST several prompts
   const prompts = ['Landing page for a fitness coach','Portfolio for a photographer','Product launch SaaS'];
@@ -74,8 +43,8 @@ async function run(){
   }
 
   // Simulate offline: kill worker and ensure /generate-template is unavailable or returns 5xx
-  console.log('Simulating worker down');
-  killWorker();
+  console.log('Simulating server down');
+  try{ proc.kill(); }catch(e){}
   // wait a bit for sockets to close
   await new Promise(r=>setTimeout(r,2000));
 
@@ -103,7 +72,7 @@ async function run(){
 
   // Restore worker
   console.log('Restoring worker');
-  proc = startWorker(); const ok2 = await waitForWorker(30000); if(!ok2){ console.error('Worker did not restart'); process.exit(1) }
+  proc = startServer(); const ok2 = await waitForServer(30000); if(!ok2){ console.error('Dev server did not restart'); process.exit(1) }
   // retry generate until success or timeout
   let recovered = false;
   for(let i=0;i<8;i++){
@@ -117,7 +86,7 @@ async function run(){
   console.log('Recovery succeeded');
 
   // Cleanup: if worker wasn't running before, kill it
-  if(!runningBefore){ killWorker(); }
+  try{ proc.kill(); }catch(e){}
   console.log('Integration test complete');
   process.exit(0);
 }

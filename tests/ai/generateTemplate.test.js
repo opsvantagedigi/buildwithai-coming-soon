@@ -4,7 +4,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 test('generateTemplate returns expected shape and deterministic id', async (t) => {
-  const modPath = path.resolve('worker', 'src', 'lib', 'ai.js');
+  const modPath = path.resolve('api', '_lib', 'ai.js');
   const mod = await import(pathToFileURL(modPath).href);
   const gen = mod.generateTemplate || (mod.default && mod.default.generateTemplate);
   assert.ok(typeof gen === 'function', 'generateTemplate is a function');
