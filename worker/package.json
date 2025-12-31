@@ -1,9 +1,0 @@
-{
-  "name": "buildwithai-worker",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {},
-  "devDependencies": {
-    "vite": "^7.3.0"
-  }
-}
