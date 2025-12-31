@@ -79,7 +79,7 @@ function applyDomainPurchaseFlow() {
     showResult("", "");
     registerBtn.style.display = "none";
     try {
-      const res = await fetch("/domain/check", {
+      const res = await fetch("/api/domain/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ domain })
@@ -118,7 +118,7 @@ function applyDomainPurchaseFlow() {
       nameservers: []
     };
     try {
-      const res = await fetch("/domain/register", {
+      const res = await fetch("/api/domain/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
@@ -348,7 +348,7 @@ function initDomainModal() {
       result.textContent = '';
       if (regPanel) fadeOut(regPanel);
       try {
-        const res = await fetch('/domain/check', {
+        const res = await fetch('/api/domain/check', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ domain })
@@ -404,7 +404,7 @@ function initDomainModal() {
         nameservers: [ns1, ns2].filter(Boolean)
       };
       try {
-        const res = await fetch('/domain/register', {
+        const res = await fetch('/api/domain/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
@@ -445,7 +445,7 @@ function initDomainModal() {
       whoisResult.className = 'bwai-status-text';
       fadeIn(whoisResult);
       try {
-        const res = await fetch('/domain/whois', {
+        const res = await fetch('/api/domain/whois', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ domain })
@@ -500,7 +500,7 @@ function initDomainModal() {
         ]
       };
       try {
-        const res = await fetch('/domain/dns', {
+        const res = await fetch('/api/domain/dns', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
@@ -598,7 +598,7 @@ function initDomainSearch() {
     showResult("", "");
 
     try {
-      const res = await fetch("/domain/check", {
+      const res = await fetch("/api/domain/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ domain })
