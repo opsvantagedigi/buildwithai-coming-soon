@@ -5,13 +5,24 @@
 // OPENPROVIDER_API_KEY=your_key
 // OPENPROVIDER_API_SECRET=your_secret
 
+// Lightweight OpenProvider client
+// Note: This wrapper uses basic auth via API key/secret. Set OPENPROVIDER_ENABLED=true
+// and add OPENPROVIDER_API_KEY/OPENPROVIDER_API_SECRET in env or Vercel project settings.
+
 async function fetchJson(url: string, options: any = {}) {
-  const res = await fetch(url, options)
-  if (!res.ok) {
-    const txt = await res.text().catch(() => '')
-    throw new Error(`OpenProvider error: ${res.status} ${txt}`)
+  // small timeout wrapper
+  const controller = new AbortController()
+  const id = setTimeout(() => controller.abort(), 15000)
+  try {
+    const res = await fetch(url, { signal: controller.signal, ...options })
+    if (!res.ok) {
+      const txt = await res.text().catch(() => '')
+      throw new Error(`OpenProvider error: ${res.status} ${txt}`)
+    }
+    return res.json().catch(() => ({}))
+  } finally {
+    clearTimeout(id)
   }
-  return res.json().catch(() => ({}))
 }
 
 function getAuthHeaders() {
@@ -27,7 +38,8 @@ function getAuthHeaders() {
 export async function getPricing() {
   if (!process.env.OPENPROVIDER_ENABLED) return null
   const base = process.env.OPENPROVIDER_BASE_URL || 'https://api.openprovider.eu'
-  const url = `${base}/v1/domains/prices` // hypothetical endpoint
+  // The exact endpoint may vary depending on OpenProvider API version; adjust if needed.
+  const url = `${base}/v1/domains/prices`
   return fetchJson(url, { headers: getAuthHeaders() })
 }
 

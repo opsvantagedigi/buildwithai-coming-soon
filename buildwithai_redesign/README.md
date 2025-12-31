@@ -33,6 +33,19 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Environment & OpenProvider
+
+Copy `.env.example` to `.env` locally and fill the OpenProvider credentials if you want the API routes to call the real vendor. For Vercel, add those variables in Project Settings > Environment Variables.
+
+Required env vars (examples):
+
+- `OPENPROVIDER_ENABLED=true` to enable real API calls
+- `OPENPROVIDER_BASE_URL=https://api.openprovider.eu`
+- `OPENPROVIDER_API_KEY=...`
+- `OPENPROVIDER_API_SECRET=...`
+
+The project includes a lightweight OpenProvider wrapper at `src/lib/openprovider.ts`. When disabled, API routes return mocked test responses.
+
 ## API Routes
 
 This directory contains example API routes for the headless API app.
