@@ -7,7 +7,12 @@ const routes = new Map([
   ['/api/domain/register', './api/domain/register.js'],
   ['/api/domain/whois', './api/domain/whois.js'],
   ['/api/domain/dns', './api/domain/dns.js'],
-  ['/api/templates', './api/templates.js']
+  ['/api/templates', './api/templates.js'],
+  ['/api/ui-config', './api/ui-config.js'],
+  ['/api/announcements', './api/announcements.js'],
+  ['/api/version', './api/version.js'],
+  ['/api/health', './api/health.js'],
+  ['/api/generate-template', './api/generate-template.js']
 ]);
 
 function createResWrapper(res) {
