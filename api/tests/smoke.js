@@ -1,6 +1,6 @@
 (async () => {
   try {
-    const base = 'http://127.0.0.1:3000';
+    const base = process.env.BASE || 'http://127.0.0.1:3000';
     console.log('Testing local endpoints at', base);
 
     const checkRes = await fetch(`${base}/api/domain/check`, {
