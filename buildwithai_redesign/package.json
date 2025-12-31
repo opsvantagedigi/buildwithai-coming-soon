@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "echo \"No tests specified. Add your test runner (e.g. jest, vitest) to enable tests.\" && exit 0"
+    "test": "vitest"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
@@ -21,6 +21,11 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^1.0.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "jsdom": "^22.0.0",
+    "zod": "^3.22.2"
   }
 }
