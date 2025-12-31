@@ -1,8 +1,5 @@
-const { spawn, execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-
 const { spawn } = require('child_process');
+const fs = require('fs');
 const path = require('path');
 const serverUrl = 'http://127.0.0.1:3000';
 

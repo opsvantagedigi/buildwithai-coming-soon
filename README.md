@@ -59,14 +59,14 @@ curl http://127.0.0.1:3000/api/health
 ```
 
 3. Check the Pages frontend (open files in a browser or serve the repository as static files):
-  - `/` (index.html) — hero text should come from `/ui-config` when Worker is running
-  - `/dashboard.html` — templates, toggles, and announcements should load from Worker
-  - `/builder.html` — templates and preview should load from Worker
+  - `/` (index.html) — hero text should come from `/api/ui-config` when the API is running
+  - `/dashboard.html` — templates, toggles, and announcements should load from the API
+  - `/builder.html` — templates and preview should load from the API
 
 4. Test fallback behavior:
-  - Stop the Worker or disable network in DevTools.
+  - Stop the local API server or disable network in DevTools.
   - Reload `/dashboard.html` — the UI should use files in `assets/sample-data/` and show the offline badge.
-  - Click "Retry Loading" after restoring the Worker to verify it picks up live data again.
+  - Click "Retry Loading" after restoring the API server to verify it picks up live data again.
 
 Expected endpoint shapes
 ------------------------
@@ -88,7 +88,7 @@ npm run test:smoke
 
 ### What it validates:
 
-- Worker endpoints
+- API endpoints
 - JSON structure
 - Fallback sample-data
 - Offline behavior
@@ -124,14 +124,14 @@ npm run test:chaos
 - Validates recovery
 
 Notes
-- The chaos test will attempt to use the local dev server to simulate failures and validate fallbacks. It no longer depends on Cloudflare Wrangler.
-- The chaos test modifies local template files to simulate failures and restores them automatically.
+-- The chaos test will attempt to use the local dev server to simulate failures and validate fallbacks.
+-- The chaos test modifies local template files to simulate failures and restores them automatically.
 
 ## AI‑Powered Template Generation
 
 This repository includes a lightweight, deterministic AI placeholder for generating templates locally.
 
-- Endpoint: `POST /generate-template`
+-- Endpoint: `POST /api/generate-template`
 - Request JSON: `{ "prompt": "Landing page for a fitness coach" }`
 - Response JSON shape:
 
@@ -148,8 +148,8 @@ This repository includes a lightweight, deterministic AI placeholder for generat
 
 How the builder uses it:
 - The builder page exposes a "Generate with AI" button that opens a prompt modal.
-- The prompt is POSTed to `/generate-template` and the returned `html`/`css` are injected into the preview panel for live preview.
-- If the Worker is offline or the endpoint fails, the UI shows a friendly message and falls back to sample-data for templates.
+-- The prompt is POSTed to `/api/generate-template` and the returned `html`/`css` are injected into the preview panel for live preview.
+-- If the API server is offline or the endpoint fails, the UI shows a friendly message and falls back to sample-data for templates.
 
 Future upgrade path:
 - Replace `worker/src/lib/ai.js` with an integration to a real AI provider (OpenAI, Anthropic, or your internal model). Keep the same `generateTemplate(prompt)` signature and return shape to remain compatible with the frontend.
@@ -173,9 +173,9 @@ npm run test:builder
 
 What they validate:
 - `tests/ai/generateTemplate.test.js` ensures `generateTemplate(prompt)` returns the expected shape and deterministic ids.
-- `tests/builder/generateTemplate.integration.js` posts prompts to `/generate-template`, validates responses, simulates worker downtime, checks fallback sample-data, and restores the Worker.
+-- `tests/builder/generateTemplate.integration.js` posts prompts to `/api/generate-template`, validates responses, simulates server downtime, checks fallback sample-data, and restores the API server.
 
-These tests preserve the contract between the Worker and frontend and make it easier to replace the rule-based generator with a real AI provider in the future.
+These tests preserve the contract between the API and frontend and make it easier to replace the rule-based generator with a real AI provider in the future.
 
 
 
