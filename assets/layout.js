@@ -1,11 +1,23 @@
 // Shared layout helpers and UI behaviors
 (function(){
   const API = {
-    templates: '/templates',
-    uiConfig: '/ui-config',
-    announcements: '/announcements',
-    samples: '/assets/sample-data',
-    generate: '/generate-template'
+    domain: {
+      check: '/api/domain/check',
+      pricing: '/api/domain/pricing',
+      register: '/api/domain/register',
+      whois: '/api/domain/whois',
+      dns: '/api/domain/dns'
+    },
+    templates: {
+      list: '/api/templates',
+      generate: '/api/generate-template'
+    },
+    ui: {
+      config: '/api/ui-config',
+      announcements: '/api/announcements',
+      version: '/api/version'
+    },
+    samples: '/assets/sample-data'
   };
 
   function qs(sel, ctx=document){return ctx.querySelector(sel)}
@@ -14,8 +26,9 @@
   async function fetchJson(path){try{const r=await fetch(path); if(!r.ok) return null; return await r.json()}catch(e){console.warn('fetch',path,e);return null}}
 
   // Try primary then fallback, returning parsed JSON or null.
-  // If running the static site locally (e.g. Live Server on :5500) and the Worker
-  // is available on :8787, attempt that origin as an additional fallback.
+  // If the primary origin is unavailable when running the static site locally
+  // (e.g. Live Server on :5500), try the local API dev server on port 3000
+  // (127.0.0.1:3000 and localhost:3000) as an additional fallback.
   async function fetchWithFallback(primaryUrl, fallbackUrl){
     if(!navigator.onLine){ console.warn('Offline — using fallback', fallbackUrl); return fetchJson(fallbackUrl) }
 
@@ -28,24 +41,24 @@
       console.warn('Primary fetch failed', primaryUrl, r.status);
     }catch(e){ console.warn('Primary fetch error', primaryUrl, e) }
 
-    // If primary failed, and we're not already talking to the worker dev server,
-    // try the worker dev origin which runs on 127.0.0.1:8787 during local development.
+    // If primary failed, and we're not already talking to the local API dev server,
+    // try the local dev origin which commonly runs on 127.0.0.1:3000 during local development.
     try{
       // If page is served from file:// we can't use the primary origin — try worker dev directly.
       const tryHosts = ['127.0.0.1', 'localhost'];
       const tried = new Set();
       for(const host of tryHosts){
         // avoid trying the same origin we're already on
-        const onWorkerPort = (location.hostname === host && String(location.port) === '8787');
-        if(onWorkerPort) continue;
+        const onDevPort = (location.hostname === host && String(location.port) === '3000');
+        if(onDevPort) continue;
         if(tried.has(host)) continue;
         tried.add(host);
-        const workerUrl = `http://${host}:8787${primaryUrl.startsWith('/') ? primaryUrl : '/' + primaryUrl}`;
+        const devUrl = `http://${host}:3000${primaryUrl.startsWith('/') ? primaryUrl : '/' + primaryUrl}`;
         try{
-          const wr = await fetch(workerUrl);
-          if(wr.ok){ console.info('Fetched from worker dev at', workerUrl); return await wr.json(); }
-          console.warn('Worker dev fetch failed', workerUrl, wr.status);
-        }catch(e){ console.warn('Worker dev fetch error', workerUrl, e); }
+          const wr = await fetch(devUrl);
+          if(wr.ok){ console.info('Fetched from local API dev at', devUrl); return await wr.json(); }
+          console.warn('Local API dev fetch failed', devUrl, wr.status);
+        }catch(e){ console.warn('Local API dev fetch error', devUrl, e); }
       }
     }catch(e){ console.warn('worker fallback check error', e) }
 
@@ -124,9 +137,9 @@
 
     // fetch with fallback
     const [ui, templates, announcements] = await Promise.all([
-      fetchWithFallback(API.uiConfig, `${API.samples}/ui-config.json`),
-      fetchWithFallback(API.templates, `${API.samples}/templates.json`),
-      fetchWithFallback(API.announcements, `${API.samples}/announcements.json`)
+        fetchWithFallback(API.ui.config, `${API.samples}/ui-config.json`),
+        fetchWithFallback(API.templates.list, `${API.samples}/templates.json`),
+        fetchWithFallback(API.ui.announcements, `${API.samples}/announcements.json`)
     ]);
 
     if(!ui && !templates && !announcements){
@@ -212,7 +225,7 @@
     // skeleton
     const grid = qs('#builderTemplates'); grid.innerHTML = '<div class="template-card skeleton" style="height:140px"></div><div class="template-card skeleton" style="height:140px"></div>';
 
-    const templates = await fetchWithFallback(API.templates, `${API.samples}/templates.json`);
+    const templates = await fetchWithFallback(API.templates.list, `${API.samples}/templates.json`);
     if(!templates){ showError(container, async ()=>{ await renderBuilder(root) }); return }
     const list = (templates && templates.templates) || templates || [];
     if(list.length===0) grid.innerHTML = '<div class="muted card">No templates</div>';
@@ -246,10 +259,10 @@
       if(!prompt){ msg.textContent='Please enter a prompt'; return }
       msg.textContent='Generating…';
       try{
-        if(!navigator.onLine){ msg.textContent='Offline — AI generation requires the Worker.'; return }
+        if(!navigator.onLine){ msg.textContent='Offline — AI generation requires the API server.'; return }
         // show loading skeleton
         const preview = document.getElementById('aiPreviewContainer'); preview.innerHTML = '<div class="skeleton" style="height:220px"></div>';
-        const res = await fetch(API.generate, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ prompt }) });
+        const res = await fetch(API.templates.generate, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ prompt }) });
         if(!res.ok){ msg.textContent = `Generation failed: ${res.status}`; preview.innerHTML=''; return }
         const j = await res.json();
         msg.textContent='Generated — preview below';

@@ -82,7 +82,13 @@ This starts:
 
 # 7. Deployment Workflow
 
-Deployment instructions have been removed to prepare this repository for a clean, fresh Worker deployment process. Add detailed deployment steps (Pages, Workers, DNS, CI) when account and domain choices are finalized.
+This project is designed to deploy as a Vercel project using the `/api` serverless functions. Suggested steps:
+
+- Create a Vercel project and link the repository.
+- Add environment variables in the Vercel dashboard: `OPENPROVIDER_USERNAME`, `OPENPROVIDER_PASSWORD`, `OPENPROVIDER_API_URL`.
+- Deploy to production and verify `/api/*` endpoints respond with JSON.
+
+For local testing, use `npx vercel dev` or run `node dev-server.mjs` to host the `api/` handlers on `http://127.0.0.1:3000`.
 
 ---
 
@@ -90,11 +96,11 @@ Deployment instructions have been removed to prepare this repository for a clean
 
 Copilot is configured to:
 
-- Maintain global design system  
-- Generate Worker routes  
-- Extend domain integration  
-- Build new pages  
-- Keep code consistent  
+- Maintain the global design system
+- Suggest serverless API route implementations under `api/`
+- Extend domain integration
+- Build new pages
+- Keep code consistent
 
 See `COPILOT_WORKSPACE.md` for prompts.
 
@@ -102,10 +108,10 @@ See `COPILOT_WORKSPACE.md` for prompts.
 
 # 9. Code Style
 
-- No inline CSS or JS  
-- Use `bwai-*` class system  
-- Use modular Worker routes  
-- Keep functions pure and testable  
+- No inline CSS or JS
+- Use `bwai-*` class system
+- Use modular serverless API routes under `api/`
+- Keep functions pure and testable
 
 ---
 

@@ -79,7 +79,7 @@ function applyDomainPurchaseFlow() {
     showResult("", "");
     registerBtn.style.display = "none";
     try {
-      const res = await fetch("/api/domain/check", {
+      const res = await fetch(API.domain.check, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ domain })
@@ -118,7 +118,7 @@ function applyDomainPurchaseFlow() {
       nameservers: []
     };
     try {
-      const res = await fetch("/api/domain/register", {
+      const res = await fetch(API.domain.register, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
@@ -136,6 +136,25 @@ function applyDomainPurchaseFlow() {
     registerBtn.disabled = false;
   });
 }
+// Centralized API map for frontend calls
+const API = {
+  domain: {
+    check: '/api/domain/check',
+    pricing: '/api/domain/pricing',
+    register: '/api/domain/register',
+    whois: '/api/domain/whois',
+    dns: '/api/domain/dns'
+  },
+  templates: {
+    list: '/api/templates',
+    generate: '/api/generate-template'
+  },
+  ui: {
+    config: '/api/ui-config',
+    announcements: '/api/announcements',
+    version: '/api/version'
+  }
+};
 /* =========================================================
    BUILD WITH AI — Global Interactivity Layer (layout.js)
    Enterprise-grade behavior system for all pages
@@ -348,7 +367,7 @@ function initDomainModal() {
       result.textContent = '';
       if (regPanel) fadeOut(regPanel);
       try {
-        const res = await fetch('/api/domain/check', {
+        const res = await fetch(API.domain.check, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ domain })
@@ -404,7 +423,7 @@ function initDomainModal() {
         nameservers: [ns1, ns2].filter(Boolean)
       };
       try {
-        const res = await fetch('/api/domain/register', {
+        const res = await fetch(API.domain.register, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
@@ -445,7 +464,7 @@ function initDomainModal() {
       whoisResult.className = 'bwai-status-text';
       fadeIn(whoisResult);
       try {
-        const res = await fetch('/api/domain/whois', {
+        const res = await fetch(API.domain.whois, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ domain })
@@ -500,7 +519,7 @@ function initDomainModal() {
         ]
       };
       try {
-        const res = await fetch('/api/domain/dns', {
+        const res = await fetch(API.domain.dns, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
@@ -598,7 +617,7 @@ function initDomainSearch() {
     showResult("", "");
 
     try {
-      const res = await fetch("/api/domain/check", {
+      const res = await fetch(API.domain.check, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ domain })

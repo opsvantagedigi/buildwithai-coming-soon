@@ -1,4 +1,12 @@
 // Global layout utilities for BUILD WITH AI
+const API = {
+  version: '/api/version',
+  uiConfig: '/api/ui-config',
+  templates: '/api/templates',
+  announcements: '/api/announcements',
+  generate: '/api/generate-template',
+  domain: '/api/domain'
+};
 
 const layout = {
   renderHeader() {
@@ -41,7 +49,23 @@ const layout = {
 };
 
 // Auto-render header/footer on load
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   layout.renderHeader();
   layout.renderFooter();
+  try {
+    const res = await fetch(API.version);
+    if (res && res.ok) {
+      const j = await res.json();
+      const header = document.querySelector('header');
+      if (header && j && j.version) {
+        const ver = document.createElement('div');
+        ver.className = 'muted version-info';
+        ver.textContent = `v ${j.version}`;
+        ver.style.marginLeft = '12px';
+        header.appendChild(ver);
+      }
+    }
+  } catch (e) {
+    // silent
+  }
 });
