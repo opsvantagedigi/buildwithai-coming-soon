@@ -1,0 +1,15 @@
+@import "@fontsource/orbitron/index.css";
+@import "@fontsource/inter/index.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(120deg, #00c6fb 0%, #05dfd7 50%, #f5d300 100%);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', sans-serif;
+}
