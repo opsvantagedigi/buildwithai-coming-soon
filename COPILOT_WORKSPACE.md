@@ -11,22 +11,22 @@ Copilot must:
 - Use the global design system (`layout.css`)
 - Use the `bwai-*` class naming convention
 - Avoid inline CSS or JS
-- Keep Worker routes modular
+-- Keep API routes modular
 - Use the OpenProvider REST client (`openproviderRequest`)
 - Maintain consistent formatting
 
 ---
 
-# 2. Worker Development Prompts
+## 2. API Route Prompts
 
-Use these prompts when generating Worker modules:
+Use these prompts when generating serverless API modules (place under `api/`):
 
 - MODULE 1: OpenProvider REST client  
-- MODULE 2: /domain/check  
-- MODULE 3: /domain/pricing  
-- MODULE 4: /domain/register  
-- MODULE 5: /domain/whois  
-- MODULE 6: Worker router  
+- MODULE 2: /api/domain/check  
+- MODULE 3: /api/domain/pricing  
+- MODULE 4: /api/domain/register  
+- MODULE 5: /api/domain/whois  
+- MODULE 6: API router / route organization  
 
 (See MASTER PROMPT PACK for full text.)
 

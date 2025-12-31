@@ -11,7 +11,7 @@ Install:
 
 - Node.js 20+
 - Git
-- Cloudflare CLI (Wrangler)  # (removed—deployment instructions sanitized)
+-- Vercel CLI (optional)  # use `npx vercel` or `npx vercel dev` for local serverless testing
 - VS Code (recommended)
 - GitHub Copilot (optional but encouraged)
 
@@ -42,10 +42,10 @@ Static HTML using global design system.
 
 ### AI Builder  
 Located in `/public/builder.html`  
-Uses Worker endpoint `/generate-template`.
+Uses serverless API endpoint `/api/generate-template`.
 
 ### Domain System  
-Located in `/worker/src`  
+Located in `/api/domain`  
 Handles:
 
 - Domain search  
@@ -57,7 +57,7 @@ Handles:
 
 # 5. Environment Variables
 
-Add these to Cloudflare Worker settings:
+Add these to your deployment environment variables (Vercel or other):
 
 OPENPROVIDER_USERNAME=""
 OPENPROVIDER_PASSWORD=""
@@ -76,7 +76,7 @@ Code
 This starts:
 
 - Local static server  
-- Worker in dev mode  
+- Local serverless dev (e.g. `npx vercel dev` or `node dev-server.mjs`)
 
 ---
 

@@ -1,6 +1,6 @@
-# BUILD WITH AI — Pages frontend
+# BUILD WITH AI — Static frontend
 
-This repository hosts the Cloudflare Pages frontend for BUILD WITH AI.
+This repository hosts the static frontend and Vercel serverless API for BUILD WITH AI.
 
 Overview
 - `index.html` — homepage, uses shared layout and loads `/ui-config` for dynamic hero text and features.
@@ -9,11 +9,11 @@ Overview
 - `assets/layout.css` — shared theme, layout, and motion rules.
 - `assets/layout.js` — shared header/footer renderers and dashboard/builder client logic.
 
-How the frontend talks to the Worker
-- The frontend fetches the following Worker endpoints from the same origin:
-  - `/ui-config` — returns hero text and feature flags
-  - `/templates` — returns available templates (title, description, image, metadata)
-  - `/announcements` — returns live announcements
+How the frontend talks to the serverless API
+- The frontend fetches the following API endpoints from the same origin (now under `/api`):
+  - `/api/ui-config` — returns hero text and feature flags
+  - `/api/templates` — returns available templates (title, description, image, metadata)
+  - `/api/announcements` — returns live announcements
 
 Notes
 - All Worker backend changes are intentionally avoided here; the frontend consumes the above endpoints only.
@@ -36,23 +36,26 @@ How to add or update sample data
 
 Smoke-check & Verification
 --------------------------
-To verify the Worker and frontend locally:
+To verify the API and frontend locally:
 
-1. Start the Worker dev server (from the repo root):
+1. Start the local dev server (Vercel or lightweight dev server):
 
 ```bash
-cd worker
-npx wrangler dev
+# Option A: Vercel dev
+npx vercel dev
+
+# Option B: lightweight dev server (included)
+node dev-server.mjs
 ```
 
-2. Verify Worker endpoints (example using curl):
+2. Verify API endpoints (example using curl):
 
 ```bash
-curl http://127.0.0.1:8787/ui-config
-curl http://127.0.0.1:8787/templates
-curl http://127.0.0.1:8787/announcements
-curl http://127.0.0.1:8787/version
-curl http://127.0.0.1:8787/health
+curl http://127.0.0.1:3000/api/ui-config
+curl http://127.0.0.1:3000/api/templates
+curl http://127.0.0.1:3000/api/announcements
+curl http://127.0.0.1:3000/api/version
+curl http://127.0.0.1:3000/api/health
 ```
 
 3. Check the Pages frontend (open files in a browser or serve the repository as static files):
@@ -92,7 +95,7 @@ npm run test:smoke
 - Schema consistency
 
 Notes
-- By default the script expects the Worker dev server to be running at `http://127.0.0.1:8787` and will mark endpoint tests as failures if unreachable.
+- By default the script expects the local dev server to be running at `http://127.0.0.1:3000` and will mark endpoint tests as failures if unreachable.
 - To run the smoke tests in an offline-first mode (treat endpoint failures as warnings) set the environment variable `ALLOW_OFFLINE=1` when running the tests.
 
 Examples
@@ -121,9 +124,8 @@ npm run test:chaos
 - Validates recovery
 
 Notes
-- The script will attempt to start `npx wrangler dev` in the `worker/` folder if a dev server is not already running on port 8787. If you prefer to run the dev server manually, start it before running the chaos test.
-- The chaos test modifies `worker/src/routes/templates.js` temporarily and restores it automatically.
-- Run the chaos test in a terminal with sufficient permissions; the script is designed to be cross-platform but needs `npx wrangler` available.
+- The chaos test will attempt to use the local dev server to simulate failures and validate fallbacks. It no longer depends on Cloudflare Wrangler.
+- The chaos test modifies local template files to simulate failures and restores them automatically.
 
 ## AI‑Powered Template Generation
 

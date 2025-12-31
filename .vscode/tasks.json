@@ -8,13 +8,7 @@
       "group": "build",
       "problemMatcher": []
     },
-    {
-      "label": "Deploy Worker",
-      "type": "shell",
-      "command": "npx wrangler deploy",
-      "group": "build",
-      "problemMatcher": []
-    },
+    
     {
       "label": "Format Code",
       "type": "shell",
