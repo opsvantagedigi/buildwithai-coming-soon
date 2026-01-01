@@ -1,5 +1,6 @@
 import { estimatePricing } from "./pricingFallback";
 import rdap from "./rdap";
+import { checkDomainAvailability } from './domainAvailability'
 
 export type DomainRecommendation = {
   domain: string;
@@ -45,18 +46,12 @@ export async function generateDomainRecommendations(baseDomain: string): Promise
   }
 
   // Perform live RDAP availability checks in parallel (best-effort)
-  const availabilityChecks = recs.map(async (r) => {
-    try {
-      const data = await rdap.fetchRdap(r.domain)
-      const norm = rdap.normalizeToCanonical(data)
-      r.availability = typeof norm.registered === 'boolean' ? !norm.registered : null
-    } catch (e) {
-      r.availability = null
-    }
-  })
-
-  await Promise.all(availabilityChecks)
   return recs
 }
 
 export default generateDomainRecommendations;
+
+export async function enrichRecommendationsWithAvailability(recs: DomainRecommendation[]) {
+  const checks = await Promise.all(recs.map(r => checkDomainAvailability(r.domain)))
+  return recs.map((r, i) => ({ ...r, availability: checks[i].available, availabilityReason: checks[i].reason }))
+}

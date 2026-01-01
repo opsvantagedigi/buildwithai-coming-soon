@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   try {
     const rdapRaw = await rdap.fetchRdap(domain)
     const rdapNorm = rdap.normalizeToCanonical(rdapRaw)
-    const available = !rdapNorm.registered
+    const available = rdapNorm && typeof rdapNorm.registered === 'boolean' ? !rdapNorm.registered : null
     return NextResponse.json({ success: true, domain, available, rdap: rdapNorm })
   } catch (e: any) {
     return NextResponse.json({ success: false, error: 'rdap_error', message: String(e?.message || e) }, { status: 502 })

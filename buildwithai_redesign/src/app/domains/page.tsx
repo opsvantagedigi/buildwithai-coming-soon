@@ -101,7 +101,12 @@ export default function DomainsPage() {
                 {result.recommendations.map((rec: any) => (
                   <li key={rec.domain} className="flex items-start justify-between">
                     <div>
-                      <span className="font-mono">{rec.domain}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono">{rec.domain}</span>
+                        {rec.availability === true && <span className="text-green-700 text-xs">Available</span>}
+                        {rec.availability === false && <span className="text-red-700 text-xs">Taken</span>}
+                        {rec.availability === null && <span className="text-gray-500 text-xs">Unknown</span>}
+                      </div>
                       <div className="text-xs text-gray-600">{rec.reason}{rec.suggestedUse ? ` · ${rec.suggestedUse}` : null}</div>
                     </div>
                     <span className="text-xs text-gray-500">Similarity: {(rec.similarity * 100).toFixed(0)}%</span>

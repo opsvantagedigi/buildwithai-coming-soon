@@ -4,7 +4,7 @@ import rdap from '@/lib/rdap'
 import { getPricingData } from '@/app/api/domain/pricing/route'
 import openprovider from '@/lib/openprovider'
 import computeDomainHealth from '@/lib/domainHealth'
-import { generateDomainRecommendations } from '@/lib/domainRecommend'
+import { generateDomainRecommendations, enrichRecommendationsWithAvailability } from '@/lib/domainRecommend'
 import { analyzeDns } from '@/lib/dnsDiagnostics'
 import { scoreDomainSeo } from '@/lib/domainSeoScore'
 
@@ -43,10 +43,11 @@ export async function POST(request: Request) {
 
   const health = rdapRes && !(rdapRes as any).error ? computeDomainHealth(rdapRes) : { score: null }
   const recommendations = await generateDomainRecommendations(domain)
+  const recommendationsEnriched = await enrichRecommendationsWithAvailability(recommendations)
   const dnsDiagnostics = rdapRes && !(rdapRes as any).error ? analyzeDns(rdapRes) : []
   const seo = scoreDomainSeo(domain)
 
-  const res = NextResponse.json({ success: true, domain, rdap: rdapRes, pricing: pricingFinal, availability: availabilityRes, health, recommendations, dnsDiagnostics, seo })
+  const res = NextResponse.json({ success: true, domain, rdap: rdapRes, pricing: pricingFinal, availability: availabilityRes, health, recommendations: recommendationsEnriched, dnsDiagnostics, seo })
   // set short cache header for clients
   res.headers.set('Cache-Control', 'public, max-age=60, s-maxage=300')
   return res
