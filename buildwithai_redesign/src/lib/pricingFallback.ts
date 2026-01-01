@@ -33,6 +33,21 @@ const TLD_PRICING_TABLE: Record<string, TldPricingConfig> = {
   nz: { price: 25, category: 'ccTld' },
   uk: { price: 20, category: 'ccTld' },
   co: { price: 25, category: 'ccTld' },
+  de: { price: 18, category: 'ccTld' },
+  fr: { price: 18, category: 'ccTld' },
+  jp: { price: 25, category: 'ccTld' },
+  ca: { price: 20, category: 'ccTld' },
+  au: { price: 22, category: 'ccTld' },
+
+  // More niche / brand TLDs
+  cloud: { price: 40, category: 'niche' },
+  ai_cc: { price: 70, category: 'premium' },
+  shop: { price: 20, category: 'niche' },
+  store: { price: 20, category: 'niche' },
+  finance: { price: 45, category: 'niche' },
+  crypto: { price: 50, category: 'niche' },
+  eth: { price: 80, category: 'premium' },
+  wallet: { price: 40, category: 'niche' },
 };
 
 function extractTld(domain: string) {

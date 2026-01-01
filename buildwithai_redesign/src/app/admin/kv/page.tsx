@@ -43,6 +43,8 @@ export default function KvAdminPage() {
     <main className="mx-auto max-w-3xl px-4 py-10 space-y-8">
       <h1 className="text-2xl font-semibold">KV & RDAP Admin</h1>
 
+      <div className="text-sm text-gray-600">This admin UI is protected — include <code>?token=YOUR_ADMIN_TOKEN</code> in the URL or set an <code>x-admin-token</code> header. Set <code>ADMIN_TOKEN</code> in your deployment environment.</div>
+
       <section className="rounded-lg border p-4 bg-white space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">KV Health</h2>
