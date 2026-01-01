@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import openprovider from '@/lib/openprovider'
 import validation from '@/lib/validation'
-import logger from '@/lib/logger'
+import rdap from '@/lib/rdap'
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}))
@@ -10,15 +9,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: 'invalid_payload', details: parse.error.format() }, { status: 400 })
   }
   const domain = parse.data.domain
-  if (process.env.OPENPROVIDER_ENABLED) {
-    try {
-      const res = await openprovider.checkDomain(domain)
-      if (res) return NextResponse.json({ success: true, provider: 'openprovider', res })
-    } catch (e) {
-      logger.logError('OpenProvider check error', e)
-      return NextResponse.json({ success: false, error: 'provider_error' }, { status: 502 })
-    }
+
+  try {
+    const rdapRaw = await rdap.fetchRdap(domain)
+    const rdapNorm = rdap.normalizeToCanonical(rdapRaw)
+    const available = !rdapNorm.registered
+    return NextResponse.json({ success: true, domain, available, rdap: rdapNorm })
+  } catch (e: any) {
+    return NextResponse.json({ success: false, error: 'rdap_error', message: String(e?.message || e) }, { status: 502 })
   }
-  const result = { domain, available: false, message: 'registered (test mode)' }
-  return NextResponse.json({ success: true, ...result })
 }

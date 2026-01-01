@@ -7,11 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest"
+    "test": "vitest",
+    "postbuild": "node scripts/check-kv.js || echo \"[KV CHECK] check failed or skipped\""
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
     "@fontsource/orbitron": "^5.2.8",
+    "@vercel/kv": "^0.1.0",
     "next": "16.1.1"
   },
   "devDependencies": {

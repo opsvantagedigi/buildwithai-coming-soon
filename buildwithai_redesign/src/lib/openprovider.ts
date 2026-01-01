@@ -9,17 +9,57 @@
 // Note: This wrapper uses basic auth via API key/secret. Set OPENPROVIDER_ENABLED=true
 // and add OPENPROVIDER_API_KEY/OPENPROVIDER_API_SECRET in env or Vercel project settings.
 
+import { logInfo, logError } from './logger'
+
 async function fetchJson(url: string, options: any = {}) {
-  // small timeout wrapper
+  // small timeout wrapper with verbose, but safe logging
   const controller = new AbortController()
   const id = setTimeout(() => controller.abort(), 15000)
+
+  const method = (options.method || 'GET').toUpperCase()
+  const headers = options.headers || {}
+  const sanitizedHeaders: Record<string, string> = {}
+  Object.keys(headers).forEach((k) => {
+    if (k.toLowerCase() === 'authorization') sanitizedHeaders[k] = 'REDACTED'
+    else sanitizedHeaders[k] = String((headers as any)[k])
+  })
+
   try {
+    logInfo('OpenProvider request', { method, url, headers: sanitizedHeaders, body: options.body ? '[REDACTED_BODY]' : undefined })
+
     const res = await fetch(url, { signal: controller.signal, ...options })
-    if (!res.ok) {
-      const txt = await res.text().catch(() => '')
-      throw new Error(`OpenProvider error: ${res.status} ${txt}`)
+
+    const status = res.status
+    let text = ''
+    try {
+      text = await res.text()
+    } catch (e) {
+      text = ''
     }
-    return res.json().catch(() => ({}))
+
+    // Try parse JSON for structured logging; fall back to raw text
+    let parsed: any = null
+    try {
+      parsed = text ? JSON.parse(text) : null
+    } catch (e) {
+      parsed = text
+    }
+
+    logInfo('OpenProvider response', { url, status, body: typeof parsed === 'string' ? parsed.slice(0, 2000) : parsed })
+
+    if (!res.ok) {
+      logError('OpenProvider non-OK response', { url, status, body: typeof parsed === 'string' ? parsed.slice(0, 2000) : parsed })
+      throw new Error(`OpenProvider error: ${status} ${text}`)
+    }
+
+    try {
+      return parsed ?? {}
+    } catch (e) {
+      return {}
+    }
+  } catch (err: any) {
+    logError('OpenProvider request failed', { url, method, message: err?.message })
+    throw err
   } finally {
     clearTimeout(id)
   }
@@ -30,6 +70,7 @@ function getAuthHeaders() {
   const secret = process.env.OPENPROVIDER_API_SECRET
   const headers: Record<string,string> = { 'Content-Type': 'application/json' }
   if (key && secret) {
+    // set Authorization but do not expose value in logs
     headers['Authorization'] = `Basic ${Buffer.from(`${key}:${secret}`).toString('base64')}`
   }
   return headers
