@@ -4,16 +4,18 @@ import type { NextRequest } from 'next/server'
 export function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl
 
-  if (pathname.startsWith('/admin')) {
-    const provided = searchParams.get('token') || req.headers.get('x-admin-token')
-    const expected = process.env.ADMIN_TOKEN
-    if (!expected) {
-      // No admin token configured — block access to be safe
-      return NextResponse.rewrite(new URL('/', req.url))
-    }
-    if (!provided || provided !== expected) {
-      return NextResponse.rewrite(new URL('/', req.url))
-    }
+  // Only protect /admin routes
+  if (!pathname.startsWith('/admin')) return NextResponse.next()
+
+  const token = searchParams.get('token') || req.headers.get('x-admin-token')
+  const expected = process.env.ADMIN_DASHBOARD_TOKEN
+
+  if (!expected) {
+    return new NextResponse('ADMIN_DASHBOARD_TOKEN is not configured on the server.', { status: 500 })
+  }
+
+  if (!token || token !== expected) {
+    return new NextResponse('Unauthorized', { status: 401 })
   }
 
   return NextResponse.next()
