@@ -18,6 +18,8 @@
     "redis": "^5.10.0"
   },
   "devDependencies": {
+    "@next/mdx": "^3.0.0",
+    "@mdx-js/react": "^2.3.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^14.0.0",
