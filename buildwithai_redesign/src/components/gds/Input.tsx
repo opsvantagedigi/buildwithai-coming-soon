@@ -1,5 +1,35 @@
 import React from 'react'
 
+type Props = React.InputHTMLAttributes<HTMLInputElement> & {
+  label?: string
+  helper?: string
+  error?: string | boolean
+}
+
+export default function Input({ label, error, helper, ...props }: Props){
+  const errorText = typeof error === 'string' ? error : undefined
+
+  return (
+    <div className="gds-input-wrapper">
+      {label && <label className="gds-input-label">{label}</label>}
+
+      <input
+        className={`gds-input ${error ? 'gds-input-error' : ''}`}
+        {...props}
+      />
+
+      {helper && !error && (
+        <span className="gds-input-helper">{helper}</span>
+      )}
+
+      {errorText && (
+        <span className="gds-input-error-text">{errorText}</span>
+      )}
+    </div>
+  )
+}
+import React from 'react'
+
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   id?: string
   label?: string

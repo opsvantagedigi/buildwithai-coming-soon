@@ -21,3 +21,176 @@
 .gds-tag{background:var(--color-neutral-100);color:var(--color-neutral-800);padding:4px 8px;border-radius:var(--radius-sm);font-size:12px}
 
 .gds-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------------------------------------------------------
+	 GDS BUTTONS — ODBWAIL Design Language
+---------------------------------------------------------- */
+
+.gds-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--space-3) var(--space-5);
+	border-radius: var(--radius-md);
+	font-family: Inter, sans-serif;
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-medium);
+	cursor: pointer;
+	transition: all var(--duration-fast) var(--ease-default);
+	border: none;
+	outline: none;
+}
+
+/* Primary */
+.gds-btn-primary {
+	background: var(--color-brand-1);
+	color: white;
+}
+
+.gds-btn-primary:hover {
+	background: var(--color-brand-2);
+}
+
+.gds-btn-primary:active {
+	background: var(--color-brand-3);
+}
+
+/* Secondary */
+.gds-btn-secondary {
+	background: var(--color-neutral-100);
+	color: var(--color-neutral-800);
+	border: 1px solid var(--color-neutral-300);
+}
+
+.gds-btn-secondary:hover {
+	background: var(--color-neutral-200);
+}
+
+/* Ghost */
+.gds-btn-ghost {
+	background: transparent;
+	color: var(--color-neutral-700);
+}
+
+.gds-btn-ghost:hover {
+	background: var(--color-neutral-100);
+}
+
+/* Destructive */
+.gds-btn-destructive {
+	background: #dc2626;
+	color: white;
+}
+
+.gds-btn-destructive:hover {
+	background: #b91c1c;
+}
+
+/* Disabled */
+.gds-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Loading */
+.gds-btn-loading {
+	position: relative;
+	pointer-events: none;
+}
+
+.gds-btn-loading::after {
+	content: "";
+	width: 16px;
+	height: 16px;
+	border: 2px solid white;
+	border-top-color: transparent;
+	border-radius: 50%;
+	animation: spin var(--duration-slow) linear infinite;
+	margin-left: var(--space-2);
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* ---------------------------------------------------------
+	 GDS INPUTS
+---------------------------------------------------------- */
+
+.gds-input-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+}
+
+.gds-input-label {
+	font-size: var(--font-size-sm);
+	color: var(--color-neutral-700);
+	font-weight: var(--font-weight-medium);
+}
+
+.gds-input {
+	padding: var(--space-3);
+	border-radius: var(--radius-md);
+	border: 1px solid var(--color-neutral-300);
+	background: white;
+	font-size: var(--font-size-md);
+	transition: border var(--duration-fast) var(--ease-default),
+							box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.gds-input:focus {
+	border-color: var(--color-brand-1);
+	box-shadow: 0 0 0 3px rgba(0, 120, 255, 0.2);
+	outline: none;
+}
+
+.gds-input-error {
+	border-color: #dc2626;
+}
+
+.gds-input-helper {
+	font-size: var(--font-size-xs);
+	color: var(--color-neutral-600);
+}
+
+.gds-input-error-text {
+	color: #dc2626;
+}
+
+/* ---------------------------------------------------------
+	 GDS CARDS
+---------------------------------------------------------- */
+
+.gds-card {
+	background: white;
+	border-radius: var(--radius-lg);
+	padding: var(--space-6);
+	box-shadow: var(--shadow-md);
+	transition: transform var(--duration-fast) var(--ease-default),
+							box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.gds-card:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-lg);
+}
+
+.gds-card-title {
+	font-family: Orbitron, sans-serif;
+	font-size: var(--font-size-xl);
+	margin-bottom: var(--space-3);
+}
+
+.gds-card-body {
+	font-size: var(--font-size-md);
+	color: var(--color-neutral-700);
+}
+
+/* DOCS LAYOUT + NAV helpers (mirrors docs.css but kept here for GDS cohesion) */
+.docs-content {
+	flex: 1;
+	max-width: 760px;
+}
