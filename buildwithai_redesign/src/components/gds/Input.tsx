@@ -1,47 +1,24 @@
 import React from 'react'
 
-type Props = React.InputHTMLAttributes<HTMLInputElement> & {
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  id?: string
   label?: string
   helper?: string
   error?: string | boolean
 }
 
-export default function Input({ label, error, helper, ...props }: Props){
+export default function Input({ id, label, helper, error, className = '', ...props }: InputProps) {
+  const inputId = id || `gds-input-${Math.random().toString(36).slice(2,8)}`
   const errorText = typeof error === 'string' ? error : undefined
 
   return (
     <div className="gds-input-wrapper">
-      {label && <label className="gds-input-label">{label}</label>}
+      {label ? <label htmlFor={inputId} className="gds-input-label">{label}</label> : null}
 
-      <input
-        className={`gds-input ${error ? 'gds-input-error' : ''}`}
-        {...props}
-      />
+      <input id={inputId} className={`gds-input ${error ? 'gds-input-error' : ''} ${className}`} {...props} />
 
-      {helper && !error && (
-        <span className="gds-input-helper">{helper}</span>
-      )}
-
-      {errorText && (
-        <span className="gds-input-error-text">{errorText}</span>
-      )}
-    </div>
-  )
-}
-import React from 'react'
-
-type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  id?: string
-  label?: string
-}
-
-export default function Input({ id, label, className = '', ...props }: InputProps) {
-  const inputId = id || `gds-input-${Math.random().toString(36).slice(2,8)}`
-
-  return (
-    <div style={{display:'flex',flexDirection:'column',gap:8}}>
-      {label ? <label htmlFor={inputId} style={{fontSize:14,fontWeight:600}}>{label}</label> : null}
-      <input id={inputId} className={`gds-input ${className}`} {...props} />
+      {helper && !error && <span className="gds-input-helper">{helper}</span>}
+      {errorText && <span className="gds-input-error-text">{errorText}</span>}
     </div>
   )
 }

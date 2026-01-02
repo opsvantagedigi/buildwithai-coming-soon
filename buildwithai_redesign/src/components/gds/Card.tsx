@@ -1,24 +1,17 @@
 import React from 'react'
 
-export default function Card({ title, children }: { title?: React.ReactNode; children: React.ReactNode }){
-  return (
-    <div className="gds-card">
-      {title && <h3 className="gds-card-title">{title}</h3>}
-      <div className="gds-card-body">{children}</div>
-    </div>
-  )
-}
-import React from 'react'
-
 type CardProps = React.HTMLAttributes<HTMLDivElement> & {
+  title?: React.ReactNode
   header?: React.ReactNode
 }
 
-export default function Card({ children, className = '', header, ...props }: CardProps) {
+export default function Card({ children, className = '', title, header, ...props }: CardProps) {
+  const heading = title ?? header
+
   return (
-    <div className={`gds-card ${className}`} role="group" aria-label={typeof header === 'string' ? header : undefined} {...props}>
-      {header ? <div style={{marginBottom:12,fontWeight:700}}>{header}</div> : null}
-      {children}
+    <div className={`gds-card ${className}`} role="group" aria-label={typeof heading === 'string' ? String(heading) : undefined} {...props}>
+      {heading ? <div className="gds-card-title">{heading}</div> : null}
+      <div className="gds-card-body">{children}</div>
     </div>
   )
 }
