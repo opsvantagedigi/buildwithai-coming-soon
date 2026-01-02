@@ -1,5 +1,38 @@
 import React from 'react'
 
+type Variant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'subtle'
+
+type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: Variant
+  loading?: boolean
+}
+
+export default function Button({ variant = 'primary', loading = false, children, className = '', disabled, ...props }: Props){
+  const variantClass = (() => {
+    switch (variant) {
+      case 'secondary': return 'gds-btn-secondary'
+      case 'ghost': return 'gds-btn-ghost'
+      case 'destructive': return 'gds-btn-destructive'
+      case 'subtle': return 'gds-btn-ghost'
+      default: return 'gds-btn-primary'
+    }
+  })()
+
+  const isDisabled = disabled || loading
+
+  return (
+    <button
+      className={`gds-btn ${variantClass} ${loading ? 'gds-btn-loading' : ''} ${className}`}
+      disabled={isDisabled}
+      aria-busy={loading}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+import React from 'react'
+
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary' | 'secondary' | 'ghost' | 'destructive'
   loading?: boolean
