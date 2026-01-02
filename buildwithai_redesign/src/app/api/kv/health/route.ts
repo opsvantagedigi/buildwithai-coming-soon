@@ -35,6 +35,16 @@ export async function GET() {
       console.log('[KV RUNTIME] kvGetRdap: error', e?.message ?? e)
     }
 
+    // Interpret set/get results: if set was skipped due to read-only mode, report it.
+    try {
+      const setRes = await kvSetRdap(testKey, { ok: true })
+      if (setRes && typeof setRes === 'object' && (setRes.skippedReadOnly || setRes.skipped === 'read-only')) {
+        return NextResponse.json({ success: true, kv: 'read-only' })
+      }
+    } catch (_) {
+      // ignore
+    }
+
     return NextResponse.json({
       success: true,
       kv: result ? 'connected' : 'no-read',

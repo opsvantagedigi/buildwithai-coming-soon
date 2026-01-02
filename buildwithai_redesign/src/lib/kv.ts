@@ -1,6 +1,13 @@
 // Thin Vercel KV adapter. If @vercel/kv is not installed or KV is not configured,
-// these functions fail gracefully and return null / noop.
+// these functions fail gracefully and return null / noop. A conservative
+// no-write fallback is implemented so we can avoid attempting writes when the
+// deployment only provides a read-only token.
 let kvClient: any = null
+// Detect explicit write availability vs read-only-only mode.
+const WRITE_ENABLED = !!(process.env.KV_REST_API_WRITE_TOKEN || process.env.KV_REST_API_TOKEN)
+const READ_ONLY_ONLY = !!process.env.KV_REST_API_READ_ONLY_TOKEN && !WRITE_ENABLED
+const NO_WRITE_FALLBACK = process.env.NO_WRITE_FALLBACK === 'true' || READ_ONLY_ONLY
+
 try {
   // If the project already has UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN
   // or custom WRITE/READ env names set, map them to the names expected by
@@ -41,6 +48,7 @@ try {
         }
       },
       async set(key: string, value: any) {
+        if (NO_WRITE_FALLBACK) return { skippedReadOnly: true }
         try {
           // Upstash expects simple JSON with `value` field for the set endpoint
           await fetch(`${base}/set/${encodeURIComponent(key)}`, {
@@ -57,6 +65,7 @@ try {
         }
       },
       async expire(key: string, ttl: number) {
+        if (NO_WRITE_FALLBACK) return null
         try {
           await fetch(`${base}/expire/${encodeURIComponent(key)}`, {
             method: 'POST',
@@ -91,7 +100,8 @@ export async function kvGetRdap(domain: string) {
 }
 
 export async function kvSetRdap(domain: string, value: any) {
-  if (!kvClient) return
+  if (!kvClient) return null
+  if (NO_WRITE_FALLBACK) return { skippedReadOnly: true }
   try {
     const key = `rdap:${domain.toLowerCase()}`
     // @vercel/kv supports expire via .set with options in newer versions; use simple set
