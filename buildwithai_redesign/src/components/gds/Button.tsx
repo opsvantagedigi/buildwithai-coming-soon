@@ -2,12 +2,14 @@ import React from 'react'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'subtle'
 
-type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant
   loading?: boolean
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
 }
 
-export default function Button({ variant = 'primary', loading = false, children, className = '', disabled, ...props }: Props){
+export default function Button({ children, variant = 'primary', className = '', loading = false, leftIcon, rightIcon, disabled, ...props }: ButtonProps) {
   const variantClass = (() => {
     switch (variant) {
       case 'secondary': return 'gds-btn-secondary'
@@ -22,30 +24,7 @@ export default function Button({ variant = 'primary', loading = false, children,
 
   return (
     <button
-      className={`gds-btn ${variantClass} ${loading ? 'gds-btn-loading' : ''} ${className}`}
-      disabled={isDisabled}
-      aria-busy={loading}
-      {...props}
-    >
-      {children}
-    </button>
-  )
-}
-import React from 'react'
-
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive'
-  loading?: boolean
-  leftIcon?: React.ReactNode
-  rightIcon?: React.ReactNode
-}
-
-export default function Button({ children, variant = 'primary', className = '', loading = false, leftIcon, rightIcon, disabled, ...props }: ButtonProps) {
-  const isDisabled = disabled || loading
-
-  return (
-    <button
-      className={`gds-btn ${variant} ${isDisabled ? 'disabled' : ''} ${className}`}
+      className={`gds-btn ${variantClass} ${loading ? 'gds-btn-loading' : ''} ${isDisabled ? '' : ''} ${className}`}
       aria-busy={loading || undefined}
       disabled={isDisabled}
       {...props}
