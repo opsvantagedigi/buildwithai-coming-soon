@@ -18,14 +18,16 @@ export default function DocPage({ params }: Props){
     )
   }
 
-  // Import the MDX file as a React component via dynamic require
-  // Note: with @next/mdx this should be importable; use require to avoid build-time issues
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const MDXContent = require(`${filePath}`).default
+  // Read the MDX file and render as raw text for now. This avoids
+  // build-time dynamic require issues with Turbopack. Later we can
+  // compile/transform MDX to React when MDX tooling is installed.
+  const content = fs.readFileSync(filePath, 'utf8')
 
   return (
     <DocsLayout>
-      <MDXContent />
+      <article>
+        <pre style={{ whiteSpace: 'pre-wrap' }}>{content}</pre>
+      </article>
     </DocsLayout>
   )
 }
