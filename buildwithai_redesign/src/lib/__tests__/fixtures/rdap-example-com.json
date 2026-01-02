@@ -1,0 +1,11 @@
+{
+  "objectClassName": "domain",
+  "handle": "2336799_DOMAIN_COM-VRSN",
+  "ldhName": "EXAMPLE.COM",
+  "links": [{ "value": "https://rdap.verisign.com/com/v1/domain/EXAMPLE.COM", "rel": "self", "href": "https://rdap.verisign.com/com/v1/domain/EXAMPLE.COM", "type": "application/rdap+json" }],
+  "status": ["client delete prohibited", "client transfer prohibited", "client update prohibited"],
+  "entities": [{ "objectClassName": "entity", "handle": "376", "roles": ["registrar"], "vcardArray": ["vcard", [["version", {}, "text", "4.0"], ["fn", {}, "text", "RESERVED-Internet Assigned Numbers Authority"]]] }],
+  "events": [{ "eventAction": "registration", "eventDate": "1995-08-14T04:00:00Z" }, { "eventAction": "expiration", "eventDate": "2026-08-13T04:00:00Z" }],
+  "secureDNS": { "delegationSigned": true },
+  "nameservers": [{ "objectClassName": "nameserver", "ldhName": "ELLIOTT.NS.CLOUDFLARE.COM" }, { "objectClassName": "nameserver", "ldhName": "HERA.NS.CLOUDFLARE.COM" }]
+}
