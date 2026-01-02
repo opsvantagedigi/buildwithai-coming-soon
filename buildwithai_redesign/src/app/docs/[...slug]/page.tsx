@@ -2,10 +2,12 @@ import React from 'react'
 import path from 'path'
 import fs from 'fs'
 import DocsLayout from '@/components/docs/DocsLayout'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
 
 type Props = { params: { slug: string[] } }
 
-export default function DocPage({ params }: Props){
+export default async function DocPage({ params }: Props){
   const slugPath = params.slug.join('/')
   const filePath = path.join(process.cwd(), 'src', 'data', 'docs', `${slugPath}.mdx`)
 
@@ -18,15 +20,13 @@ export default function DocPage({ params }: Props){
     )
   }
 
-  // Read the MDX file and render as raw text for now. This avoids
-  // build-time dynamic require issues with Turbopack. Later we can
-  // compile/transform MDX to React when MDX tooling is installed.
-  const content = fs.readFileSync(filePath, 'utf8')
+  const raw = fs.readFileSync(filePath, 'utf8')
+  const mdxSource = await serialize(raw)
 
   return (
     <DocsLayout>
-      <article>
-        <pre style={{ whiteSpace: 'pre-wrap' }}>{content}</pre>
+      <article className="docs-prose">
+        <MDXRemote {...mdxSource} />
       </article>
     </DocsLayout>
   )
