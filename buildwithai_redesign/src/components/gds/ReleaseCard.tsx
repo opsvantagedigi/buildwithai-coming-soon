@@ -1,17 +1,23 @@
 import React from 'react'
 import Card from './Card'
 
-export default function ReleaseCard({ version, title, date, tags = [], summary = '' }: any) {
+type ReleaseCardProps = {
+  version: string
+  title: string
+  date: string
+  tags?: string[]
+  summary?: string
+}
+
+export default function ReleaseCard({ version, title, date, tags = [], summary = '' }: ReleaseCardProps) {
   return (
-    <Card className="gds-release-card">
-      <div className="meta">
-        <strong>{version}</strong>
+    <Card className="gds-release-card" header={`${version} — ${title}`}>
+      <div className="meta" aria-hidden>
         <div className="gds-tag">{date}</div>
         {tags.slice(0,3).map((t: string) => (
-          <div key={t} className="gds-tag">{t}</div>
+          <span key={t} className="gds-tag" aria-label={`tag ${t}`}>{t}</span>
         ))}
       </div>
-      <h3>{title}</h3>
       <p>{summary}</p>
     </Card>
   )
